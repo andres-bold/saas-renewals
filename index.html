@@ -910,6 +910,87 @@
     </div>
   </div>
 
+  <!-- ══════════════════════════════════════════
+       PÁGINA: CONFIGURACIONES
+  ══════════════════════════════════════════ -->
+  <div class="page" id="page-config" style="display:none; flex-direction:column; padding:28px 32px; overflow-y:auto;">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:18px;color:var(--gray-text);cursor:pointer">‹</span>
+        <h1 style="font-size:22px;font-weight:700;color:var(--navy);margin:0">Configuraciones</h1>
+      </div>
+      <div id="config-header-action"></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs" style="margin-bottom:0">
+      <div class="tab active" onclick="switchConfigTab('atributos',this)">Atributos</div>
+      <div class="tab" onclick="switchConfigTab('agentes',this)">Agentes CS</div>
+      <div class="tab" onclick="switchConfigTab('ejecutivos',this)">Ejecutivos comerciales</div>
+      <div class="tab" onclick="switchConfigTab('rangos',this)">Rangos de Facturación</div>
+    </div>
+    <div style="height:1px;background:var(--gray-line);margin-bottom:24px"></div>
+
+    <!-- Tab: Atributos -->
+    <div id="ctab-atributos">
+      <div class="tab-empty">
+        <svg style="width:48px;height:48px;stroke:currentColor;fill:none;stroke-width:1.2;opacity:0.35;margin-bottom:16px" viewBox="0 0 48 48"><rect x="8" y="8" width="32" height="32" rx="4"/><path d="M16 24h16M16 32h10"/><path d="M20 8v8M28 8v8"/></svg>
+        <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px">Esta pantalla aún está en proceso de diseño</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--gray-text)">El equipo está trabajando en ella. Pronto estará disponible.</div>
+      </div>
+    </div>
+
+    <!-- Tab: Agentes CS -->
+    <div id="ctab-agentes" style="display:none">
+      <div class="tab-empty">
+        <svg style="width:48px;height:48px;stroke:currentColor;fill:none;stroke-width:1.2;opacity:0.35;margin-bottom:16px" viewBox="0 0 48 48"><rect x="8" y="8" width="32" height="32" rx="4"/><path d="M16 24h16M16 32h10"/><path d="M20 8v8M28 8v8"/></svg>
+        <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px">Esta pantalla aún está en proceso de diseño</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--gray-text)">El equipo está trabajando en ella. Pronto estará disponible.</div>
+      </div>
+    </div>
+
+    <!-- Tab: Ejecutivos comerciales -->
+    <div id="ctab-ejecutivos" style="display:none">
+      <div class="tab-empty">
+        <svg style="width:48px;height:48px;stroke:currentColor;fill:none;stroke-width:1.2;opacity:0.35;margin-bottom:16px" viewBox="0 0 48 48"><rect x="8" y="8" width="32" height="32" rx="4"/><path d="M16 24h16M16 32h10"/><path d="M20 8v8M28 8v8"/></svg>
+        <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px">Esta pantalla aún está en proceso de diseño</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--gray-text)">El equipo está trabajando en ella. Pronto estará disponible.</div>
+      </div>
+    </div>
+
+    <!-- Tab: Rangos de Facturación -->
+    <div id="ctab-rangos" style="display:none">
+      <div style="max-width:620px">
+
+        <!-- Table -->
+        <div style="border:1px solid var(--gray-line);border-radius:8px;overflow-x:auto">
+          <table style="width:100%;min-width:520px">
+            <thead>
+              <tr>
+                <th style="width:48px;text-align:center">#</th>
+                <th>Nombre</th>
+                <th style="text-align:right">Desde</th>
+                <th style="text-align:right;width:200px">Hasta</th>
+              </tr>
+            </thead>
+            <tbody id="rangos-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- Add row -->
+        <div style="margin-top:12px;display:flex;justify-content:flex-end">
+          <button class="btn btn-outline" style="font-size:12px;padding:7px 14px;display:flex;align-items:center;gap:6px" onclick="addRango()">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:13px;height:13px"><path d="M8 3v10M3 8h10"/></svg>
+            Agregar rango
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page-config -->
+
   <div class="page" id="page-renovaciones">
     <div class="page-title">Renovaciones</div>
 
@@ -1110,9 +1191,115 @@
 
     <!-- Tab: Historial (vacía) -->
     <div id="dtab-hist" style="display:none">
-      <div class="tab-empty">
-        <div class="icon">📋</div>
-        <p>Tab Historial de suscripciones — próximamente.</p>
+      <div style="padding:20px 0 8px">
+        <span style="font-size:13px;font-weight:600;color:var(--blue)">8 Registros</span>
+      </div>
+      <div class="table-wrap" style="border-radius:8px;border:1px solid var(--gray-line);overflow-x:auto">
+        <table style="min-width:820px">
+          <thead>
+            <tr>
+              <th>ID Susc.</th>
+              <th>Vertical</th>
+              <th>Plan</th>
+              <th style="text-align:right">Valor</th>
+              <th style="text-align:right">Fecha de inicio</th>
+              <th style="text-align:right">Fecha fin</th>
+              <th>Periodicidad</th>
+              <th>Ejecutivo</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="muted">346</td>
+              <td>Retail</td>
+              <td>Dulce Aroma Gold</td>
+              <td class="right">$150.000</td>
+              <td class="muted right">15 Ene 2026</td>
+              <td class="muted right">15 Ene 2026</td>
+              <td class="muted">Mensual</td>
+              <td class="muted">maria.lopez</td>
+              <td><span style="display:inline-flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:#FF9500;flex-shrink:0"></span>Futura</span></td>
+            </tr>
+            <tr>
+              <td class="muted">345</td>
+              <td>Restaurante</td>
+              <td>Emprendedor 3000 Silver pro</td>
+              <td class="right">$908.000</td>
+              <td class="muted right">12 Dic 2025</td>
+              <td class="muted right">12 Dic 2025</td>
+              <td class="muted">Anual</td>
+              <td class="muted">jorge.perez</td>
+              <td><span style="display:inline-flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:#00C48C;flex-shrink:0"></span>Activo</span></td>
+            </tr>
+            <tr>
+              <td class="muted">345</td>
+              <td>Retail</td>
+              <td>Emprendedor 3000 Silver pro</td>
+              <td class="right">$908.000</td>
+              <td class="muted right">12 Dic 2025</td>
+              <td class="muted right">12 Dic 2025</td>
+              <td class="muted">Anual</td>
+              <td class="muted">jorge.perez</td>
+              <td><span style="display:inline-flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:#C0143C;flex-shrink:0"></span>Bloqueada</span></td>
+            </tr>
+            <tr>
+              <td class="muted">347</td>
+              <td>Retail</td>
+              <td><span style="display:inline-flex;align-items:center;gap:6px">Pizza Rápida Bronze <span style="font-size:10px;font-weight:600;background:#E8F4FF;color:#1565C0;border:1px solid #90CAF9;border-radius:20px;padding:1px 8px;white-space:nowrap">Free trial</span></span></td>
+              <td class="right">$0</td>
+              <td class="muted right">01 Mar 2025</td>
+              <td class="muted right">01 Mar 2025</td>
+              <td class="muted">Trimestral</td>
+              <td class="muted">juan.garcia</td>
+              <td><span style="display:inline-flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:#7B7E96;flex-shrink:0"></span>Finalizada</span></td>
+            </tr>
+            <tr>
+              <td class="muted">347</td>
+              <td>Retail</td>
+              <td>Pizza Rápida Bronze</td>
+              <td class="right">$350.000</td>
+              <td class="muted right">01 Mar 2025</td>
+              <td class="muted right">01 Mar 2025</td>
+              <td class="muted">Trimestral</td>
+              <td class="muted">juan.garcia</td>
+              <td><span style="display:inline-flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:#7B7E96;flex-shrink:0"></span>Finalizada</span></td>
+            </tr>
+            <tr>
+              <td class="muted">349</td>
+              <td>Retail</td>
+              <td>Burgers y más Platinum</td>
+              <td class="right">$600.000</td>
+              <td class="muted right">05 Abr 2025</td>
+              <td class="muted right">05 Abr 2025</td>
+              <td class="muted">Anual</td>
+              <td class="muted">pedro.martinez</td>
+              <td><span style="display:inline-flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:#7B7E96;flex-shrink:0"></span>Finalizada</span></td>
+            </tr>
+            <tr>
+              <td class="muted">351</td>
+              <td>Servicios</td>
+              <td>Starter Básico</td>
+              <td class="right">$220.000</td>
+              <td class="muted right">10 Jun 2024</td>
+              <td class="muted right">10 Sep 2024</td>
+              <td class="muted">Trimestral</td>
+              <td class="muted">maria.lopez</td>
+              <td><span style="display:inline-flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:#7B7E96;flex-shrink:0"></span>Finalizada</span></td>
+            </tr>
+            <tr>
+              <td class="muted">340</td>
+              <td>Retail</td>
+              <td><span style="display:inline-flex;align-items:center;gap:6px">Plan Piloto <span style="font-size:10px;font-weight:600;background:#E8F4FF;color:#1565C0;border:1px solid #90CAF9;border-radius:20px;padding:1px 8px;white-space:nowrap">Free trial</span></span></td>
+              <td class="right">$0</td>
+              <td class="muted right">01 Ene 2024</td>
+              <td class="muted right">01 Mar 2024</td>
+              <td class="muted">Mensual</td>
+              <td class="muted">jorge.perez</td>
+              <td><span style="display:inline-flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:#7B7E96;flex-shrink:0"></span>Finalizada</span></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -1435,9 +1622,85 @@
     el.classList.add('active');
     const label = el.textContent.trim();
     const isRenovaciones = label.startsWith('Renovaciones');
+    const isConfig       = label.startsWith('Configuraciones');
     document.getElementById('page-renovaciones').style.display = isRenovaciones ? '' : 'none';
-    const emptyPage = document.getElementById('page-empty');
-    emptyPage.style.display = isRenovaciones ? 'none' : 'flex';
+    document.getElementById('page-config').style.display       = isConfig ? 'flex' : 'none';
+    document.getElementById('page-empty').style.display        = (!isRenovaciones && !isConfig) ? 'flex' : 'none';
+  }
+
+  /* ── CONFIG TABS ── */
+  function switchConfigTab(tab, el) {
+    document.querySelectorAll('#page-config .tabs .tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    ['atributos','agentes','ejecutivos','rangos'].forEach(id => {
+      document.getElementById('ctab-' + id).style.display = id === tab ? '' : 'none';
+    });
+  }
+
+  /* ── RANGOS DE FACTURACIÓN ── */
+  const RANGOS = [
+    { nombre:'🔴 $0',         hasta: 0          },
+    { nombre:'🟡 $1-3M',      hasta: 3000000     },
+    { nombre:'💰 $3-10M',     hasta: 10000000    },
+    { nombre:'🚀 $10-25M',    hasta: 25000000    },
+    { nombre:'🚀 $25-70M',    hasta: 70000000    },
+    { nombre:'🐘 $70M o más', hasta: Infinity    },
+  ];
+
+  function formatNum(n) {
+    if (n === Infinity || n === null) return '∞';
+    return n.toLocaleString('es-CO');
+  }
+
+  function renderRangos() {
+    const tbody = document.getElementById('rangos-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = RANGOS.map((r, i) => {
+      const desde = i === 0 ? 0 : (RANGOS[i-1].hasta === Infinity ? '∞' : RANGOS[i-1].hasta + 1);
+      const isLast = i === RANGOS.length - 1;
+      return `
+        <tr>
+          <td style="text-align:center;color:var(--gray-text)">${i}</td>
+          <td>
+            <input value="${r.nombre}" onchange="RANGOS[${i}].nombre=this.value;renderRangos()"
+              style="border:1px solid transparent;border-radius:6px;padding:4px 8px;font-family:inherit;font-size:13px;width:100%;outline:none;background:none"
+              onfocus="this.style.borderColor='var(--blue)';this.style.background='#fff'"
+              onblur="this.style.borderColor='transparent';this.style.background='none'" />
+          </td>
+          <td style="text-align:right;color:var(--gray-text);padding-right:16px">${formatNum(desde)}</td>
+          <td style="text-align:right">
+            ${isLast
+              ? `<span style="color:var(--gray-text);padding-right:16px;font-size:15px">∞</span>`
+              : `<input type="text" value="${formatNum(r.hasta)}"
+                  onchange="updateHasta(${i}, this.value)"
+                  style="border:1px solid transparent;border-radius:6px;padding:4px 8px;font-family:inherit;font-size:13px;width:130px;text-align:right;outline:none;background:none"
+                  onfocus="this.style.borderColor='var(--blue)';this.style.background='#fff'"
+                  onblur="this.style.borderColor='transparent';this.style.background='none'" />`
+            }
+            ${RANGOS.length > 2 ? `<button onclick="removeRango(${i})" style="border:none;background:none;cursor:pointer;color:var(--gray-text);padding:4px;border-radius:4px;vertical-align:middle;margin-left:4px" title="Eliminar">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M3 4h10M6 4V3h4v1M5 4l.5 9h5L11 4"/></svg>
+            </button>` : ''}
+          </td>
+        </tr>`;
+    }).join('');
+  }
+
+  function updateHasta(i, val) {
+    const n = parseInt(val.replace(/\./g,'').replace(/,/g,''), 10);
+    if (!isNaN(n)) { RANGOS[i].hasta = n; renderRangos(); }
+  }
+
+  function addRango() {
+    const lastFinite = RANGOS.slice(0,-1).at(-1)?.hasta ?? 0;
+    const newHasta = lastFinite + 1000000;
+    RANGOS.splice(RANGOS.length - 1, 0, { nombre: '✏️ Nuevo rango', hasta: newHasta });
+    renderRangos();
+  }
+
+  function removeRango(i) {
+    if (RANGOS.length <= 2) return;
+    RANGOS.splice(i, 1);
+    renderRangos();
   }
 
   /* ── DRAWER ── */
@@ -1862,6 +2125,7 @@
   /* ── INIT ── */
   renderTable();
   renderCards();
+  renderRangos();
 </script>
 </body>
 </html>
