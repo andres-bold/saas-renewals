@@ -443,8 +443,9 @@
 
     /* Cards grid */
     .cards-grid {
+      --card-min: 160px;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(var(--card-min, 160px), 1fr));
       gap: 10px;
     }
 
@@ -592,7 +593,7 @@
     }
     .prob-select-right { display: flex; align-items: center; gap: 6px; }
     .comment-prob-select {
-      width: 130px;
+      width: 95px;
       padding: 5px 10px;
       border: none; border-radius: 20px;
       font-size: 12px; font-weight: 600;
@@ -605,6 +606,42 @@
     .select-label { font-size: 11px; font-weight: 600; color: var(--gray-text); margin-bottom: 4px; display: block; }
 
     /* Prob history icon */
+    /* Prob option buttons */
+    .prob-opt-btn {
+      flex: 1; padding: 8px 10px; border-radius: 8px; border: 1.5px solid var(--gray-line);
+      font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
+      background: var(--white); color: var(--gray-text); transition: all 0.15s;
+    }
+    .prob-opt-btn.alto.active  { border-color: #00875A; background: #D4F1E7; color: #00623D; }
+    .prob-opt-btn.medio.active { border-color: #CC7700; background: #FFF0CC; color: #8A5A00; }
+    .prob-opt-btn.bajo.active  { border-color: var(--red); background: var(--red-light); color: var(--red); }
+
+    /* Cards validadas (pago confirmado internamente) */
+    .renov-card.validado { background: #F0FBF6; border-color: #A8DFC4; }
+    .renov-card.validado:hover { border-color: #5EBA96; box-shadow: 0 4px 16px rgba(0,196,140,0.12); }
+
+    /* Estado option buttons */
+    .estado-opt-btn {
+      flex: 1; padding: 8px 10px; border-radius: 8px; border: 1.5px solid var(--gray-line);
+      font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
+      background: var(--white); color: var(--gray-text); transition: all 0.15s;
+    }
+    .estado-opt-btn.active         { border-color: var(--blue);  background: #EEF0FF; color: var(--blue); }
+    .estado-opt-btn.ganado.active  { border-color: #00875A; background: #E6F7F2; color: #00875A; }
+    .estado-opt-btn.perdido.active { border-color: var(--red);  background: var(--red-light); color: var(--red); }
+
+    /* Estado history items */
+    .estado-history-item {
+      display: flex; align-items: flex-start; gap: 10px; padding: 10px 0;
+      border-bottom: 1px solid var(--gray-line);
+    }
+    .estado-history-item:last-child { border-bottom: none; }
+    .estado-tag { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 50px; white-space: nowrap; }
+    .estado-tag.proceso { background: #EEF0FF; color: var(--blue); }
+    .estado-tag.ganado  { background: #E6F7F2; color: #00875A; }
+    .estado-tag.perdido { background: var(--red-light); color: var(--red); }
+    .estado-history-comment { font-size: 12px; color: var(--gray-text); margin-top: 3px; }
+
     .prob-history-btn {
       background: none; border: none; cursor: pointer; padding: 4px;
       color: var(--gray-text); border-radius: 4px;
@@ -887,15 +924,15 @@
       <!-- Toolbar -->
       <div class="toolbar">
         <div class="search-wrap">
-          <span class="search-icon">🔍</span>
+          <span class="search-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><circle cx="6.5" cy="6.5" r="4"/><path d="M11 11l3 3"/></svg></span>
           <input type="text" placeholder="Titular, comercio, ID POS, correo…" oninput="filterTable(this.value)" />
         </div>
         <button class="btn btn-outline">
-          <span>⬇️</span> Descargar
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M8 2v9M4 8l4 4 4-4M2 14h12"/></svg> Descargar
         </button>
         <div class="sort-wrap">
           <button class="btn btn-outline" onclick="toggleSort()">
-            <span>↕️</span> Ordenar por <span class="sort-arrow">▾</span>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M2 4h12M4 8h8M6 12h4"/></svg> Ordenar por <span class="sort-arrow">▾</span>
           </button>
           <div class="sort-menu" id="sort-menu">
             <div class="sort-option" onclick="sortBy('nombre')">Nombre del comercio</div>
@@ -906,7 +943,7 @@
           </div>
         </div>
         <button class="btn btn-outline" onclick="openDrawer()">
-          <span>⚙️</span> Filtrar
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M2 3h12M5 8h6M7 13h2"/></svg> Filtrar
         </button>
       </div>
 
@@ -920,12 +957,13 @@
               <th>Nombre del comercio</th>
               <th>Prob. renovación</th>
               <th style="text-align:right">Valor a pagar</th>
+              <th style="text-align:center">Días restantes</th>
               <th>Plan actual</th>
               <th>Vertical</th>
-              <th>Antigüedad</th>
-              <th>Últ. transacción</th>
-              <th>Facturas</th>
-              <th>Comprobantes</th>
+              <th style="text-align:right">Antigüedad</th>
+              <th style="text-align:right">Últ. transacción</th>
+              <th style="text-align:center">Facturas</th>
+              <th style="text-align:center">Comprobantes</th>
               <th>Clasif. facturación</th>
             </tr>
           </thead>
@@ -949,11 +987,11 @@
       <!-- Toolbar -->
       <div class="gestion-toolbar">
         <div class="search-wrap">
-          <span class="search-icon">🔍</span>
+          <span class="search-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><circle cx="6.5" cy="6.5" r="4"/><path d="M11 11l3 3"/></svg></span>
           <input type="text" placeholder="Titular, comercio, ID POS, correo…" />
         </div>
-        <button class="btn btn-outline"><span>⬇️</span> Descargar</button>
-        <button class="btn btn-outline" onclick="openDrawer()"><span>⚙️</span> Filtrar</button>
+        <button class="btn btn-outline"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M8 2v9M4 8l4 4 4-4M2 14h12"/></svg> Descargar</button>
+        <button class="btn btn-outline" onclick="openDrawer()"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M2 3h12M5 8h6M7 13h2"/></svg> Filtrar</button>
         <div style="flex:1"></div>
         <div class="month-nav">
           <button onclick="changeMonth(-1)">‹</button>
@@ -1138,6 +1176,67 @@
 <!-- ═══════════════════════════════════════════
      PROB HISTORY MODAL
 ═══════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════
+     ESTADO CHANGE MODAL
+═══════════════════════════════════════════ -->
+<div class="center-modal-backdrop" id="estado-modal" onclick="closeEstadoModal(event)">
+  <div class="center-modal" style="max-width:420px">
+    <div class="center-modal-header">
+      <span class="center-modal-title">Cambiar estado de renovación</span>
+      <button class="drawer-close" onclick="closeEstadoModal()">✕</button>
+    </div>
+    <div class="center-modal-body" style="gap:16px">
+      <div style="display:flex;gap:8px">
+        <button class="estado-opt-btn active" id="opt-proceso" onclick="selectEstadoOpt('proceso',this)">En proceso</button>
+        <button class="estado-opt-btn ganado" id="opt-ganado"  onclick="selectEstadoOpt('ganado',this)">Ganado</button>
+        <button class="estado-opt-btn perdido" id="opt-perdido" onclick="selectEstadoOpt('perdido',this)">Perdido</button>
+      </div>
+      <textarea id="estado-comment-input" placeholder="Agrega un comentario sobre este cambio de estado…" style="width:100%;min-height:80px;resize:vertical;border:1px solid var(--gray-line);border-radius:8px;padding:10px 12px;font-family:inherit;font-size:13px;color:var(--text);outline:none"></textarea>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;border-top:1px solid var(--gray-line)">
+      <button class="btn btn-outline" style="padding:7px 16px;font-size:12px" onclick="closeEstadoModal()">Cancelar</button>
+      <button class="btn btn-primary" style="padding:7px 16px;font-size:12px" onclick="confirmEstado()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ESTADO HISTORY MODAL
+═══════════════════════════════════════════ -->
+<div class="center-modal-backdrop" id="estado-history-modal" onclick="closeEstadoHistory(event)">
+  <div class="center-modal">
+    <div class="center-modal-header">
+      <span class="center-modal-title">Historial de estado</span>
+      <button class="drawer-close" onclick="closeEstadoHistory()">✕</button>
+    </div>
+    <div class="center-modal-body" id="estado-history-body"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PROB CHANGE MODAL
+═══════════════════════════════════════════ -->
+<div class="center-modal-backdrop" id="prob-modal" onclick="closeProbModal(event)">
+  <div class="center-modal" style="max-width:420px">
+    <div class="center-modal-header">
+      <span class="center-modal-title">Cambiar probabilidad de renovación</span>
+      <button class="drawer-close" onclick="closeProbModal()">✕</button>
+    </div>
+    <div class="center-modal-body" style="gap:16px">
+      <div style="display:flex;gap:8px">
+        <button class="prob-opt-btn alto"   id="popt-alto"  onclick="selectProbOpt('Alto',this)">● Alto</button>
+        <button class="prob-opt-btn medio"  id="popt-medio" onclick="selectProbOpt('Medio',this)">● Medio</button>
+        <button class="prob-opt-btn bajo"   id="popt-bajo"  onclick="selectProbOpt('Bajo',this)">● Bajo</button>
+      </div>
+      <textarea id="prob-comment-input" placeholder="Agrega un comentario sobre este cambio de probabilidad…" style="width:100%;min-height:80px;resize:vertical;border:1px solid var(--gray-line);border-radius:8px;padding:10px 12px;font-family:inherit;font-size:13px;color:var(--text);outline:none"></textarea>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;border-top:1px solid var(--gray-line)">
+      <button class="btn btn-outline" style="padding:7px 16px;font-size:12px" onclick="closeProbModal()">Cancelar</button>
+      <button class="btn btn-primary" style="padding:7px 16px;font-size:12px" onclick="confirmProb()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
 <div class="center-modal-backdrop" id="prob-history-modal" onclick="closeProbHistory(event)">
   <div class="center-modal">
     <div class="center-modal-header">
@@ -1172,19 +1271,26 @@
       <div class="prob-select-right" style="flex-direction:column;align-items:flex-end;gap:4px">
         <span class="select-label" style="margin:0">Probabilidad de Renovación</span>
         <div style="display:flex;align-items:center;gap:6px">
-        <select class="comment-prob-select prob-alto" id="comment-prob-select" onchange="updateProbStyle(this)">
-          <option value="Alto">● Alto</option>
-          <option value="Medio">● Medio</option>
-          <option value="Bajo">● Bajo</option>
-        </select>
-        <button class="prob-history-btn has-tip" data-tip="Historial de probabilidad" onclick="openProbHistory()">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-            <path d="M2 8a6 6 0 1 0 6-6V4"/><path d="M8 2L6 4l2 2"/><path d="M8 6v3l2 1"/>
-          </svg>
-        </button>
-        </div><!-- /inner flex row -->
+          <button id="prob-inline-btn" onclick="openProbModal()" style="border:none;cursor:pointer;padding:5px 12px;border-radius:20px;font-family:inherit;font-size:12px;font-weight:600;transition:opacity 0.15s" onmouseenter="this.style.opacity='.8'" onmouseleave="this.style.opacity='1'"></button>
+          <button class="prob-history-btn has-tip" data-tip="Historial de probabilidad" onclick="openProbHistory()">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <path d="M2 8a6 6 0 1 0 6-6V4"/><path d="M8 2L6 4l2 2"/><path d="M8 6v3l2 1"/>
+            </svg>
+          </button>
+        </div>
       </div><!-- /prob-select-right -->
     </div><!-- /prob-select-row -->
+
+    <!-- Estado de renovación -->
+    <div style="display:flex;align-items:center;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--gray-line)">
+      <span style="font-size:11px;font-weight:600;color:var(--gray-text);white-space:nowrap">Estado de renovación:</span>
+      <button id="estado-inline-btn" onclick="openEstadoModal()" style="border:none;background:none;cursor:pointer;padding:0;font-family:inherit;font-size:12px;font-weight:700"></button>
+      <button class="prob-history-btn has-tip" data-tip="Historial de estado" onclick="openEstadoHistory()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <path d="M2 8a6 6 0 1 0 6-6V4"/><path d="M8 2L6 4l2 2"/><path d="M8 6v3l2 1"/>
+        </svg>
+      </button>
+    </div>
   </div><!-- /comment-drawer-header -->
   <div class="comment-list" id="comment-list"></div>
   <div class="comment-add">
@@ -1201,11 +1307,11 @@
   const ROWS = [
     { id:'345', nombre:'Restaurante Josefina',       prob:'Alto',  valor:'$2.400.000', plan:'Profesional Restaurante',  vertical:'Restaurante', antiguedad:'23 meses', diasUltima:3,  venceDia:12, facturas:120,  comprobantes:345,  clasif:'Grande',  estado:'proceso', fechaGestion:null,      comentarios:[{autor:'Ana García',iniciales:'AG',fecha:'24 may 2026',texto:'Cliente muy interesado, tiene presupuesto aprobado. Confirmar llamada para el viernes.'},{autor:'Luis Pérez',iniciales:'LP',fecha:'27 may 2026',texto:'Envié propuesta actualizada con descuento del 5%. Espero respuesta.'}] },
     { id:'512', nombre:'Tienda Don Álvaro',           prob:'Medio', valor:'$960.000',  plan:'Emprendedor Retail',        vertical:'Retail',       antiguedad:'8 meses',  diasUltima:12, venceDia:18, facturas:34,   comprobantes:91,   clasif:'Pequeño', estado:'proceso', fechaGestion:null,      comentarios:[{autor:'Carlos Ríos',iniciales:'CR',fecha:'20 may 2026',texto:'No ha respondido los últimos 2 correos. Intentar por WhatsApp.'}] },
-    { id:'689', nombre:'Papelería Central Ltda.',     prob:'Alto',  valor:'$1.800.000', plan:'Avanzado Retail',          vertical:'Retail',       antiguedad:'36 meses', diasUltima:1,  venceDia:5,  facturas:210,  comprobantes:580,  clasif:'Grande',  estado:'ganado',  fechaGestion:'12 may 2026', comentarios:[] },
+    { id:'689', nombre:'Papelería Central Ltda.',     prob:'Alto',  valor:'$1.800.000', plan:'Avanzado Retail',          vertical:'Retail',       antiguedad:'36 meses', diasUltima:1,  venceDia:27, venceMes:4, facturas:210,  comprobantes:580,  clasif:'Grande',  estado:'ganado',  fechaGestion:'12 may 2026', validado:true, comentarios:[] },
     { id:'201', nombre:'Café La Candelaria',          prob:'Bajo',  valor:'$480.000',  plan:'Emprendedor Restaurante',   vertical:'Restaurante',  antiguedad:'5 meses',  diasUltima:28, venceDia:22, facturas:12,   comprobantes:29,   clasif:'Pequeño', estado:'perdido', fechaGestion:'08 may 2026', comentarios:[{autor:'Ana García',iniciales:'AG',fecha:'08 may 2026',texto:'Cliente decidió no renovar por problemas de caja. Registrar como perdido.'}] },
-    { id:'774', nombre:'Distribuidora El Éxito S.A.', prob:'Alto',  valor:'$3.600.000', plan:'Premium Retail',           vertical:'Retail',       antiguedad:'48 meses', diasUltima:2,  venceDia:3,  facturas:430,  comprobantes:1120, clasif:'Grande',  estado:'proceso', fechaGestion:null,      comentarios:[{autor:'Luis Pérez',iniciales:'LP',fecha:'25 may 2026',texto:'Cliente VIP. Agendar visita presencial antes del vencimiento.'},{autor:'María Torres',iniciales:'MT',fecha:'28 may 2026',texto:'Visita confirmada para el 2 de junio.'}] },
+    { id:'774', nombre:'Distribuidora El Éxito S.A.', prob:'Alto',  valor:'$3.600.000', plan:'Premium Retail',           vertical:'Retail',       antiguedad:'48 meses', diasUltima:2,  venceDia:23, venceMes:4, facturas:430,  comprobantes:1120, clasif:'Grande',  estado:'proceso', fechaGestion:null,      comentarios:[{autor:'Luis Pérez',iniciales:'LP',fecha:'25 may 2026',texto:'Cliente VIP. Agendar visita presencial antes del vencimiento.'},{autor:'María Torres',iniciales:'MT',fecha:'28 may 2026',texto:'Visita confirmada para el 2 de junio.'}] },
     { id:'390', nombre:'Servicios Click S.A.S.',      prob:'Medio', valor:'$720.000',  plan:'Emprendedor Servicios',     vertical:'Servicios',    antiguedad:'14 meses', diasUltima:7,  venceDia:15, facturas:55,   comprobantes:130,  clasif:'Mediano', estado:'proceso', fechaGestion:null,      comentarios:[] },
-    { id:'133', nombre:'Farmacia Salud Total',        prob:'Alto',  valor:'$1.200.000', plan:'Profesional Retail',       vertical:'Retail',       antiguedad:'29 meses', diasUltima:4,  venceDia:9,  facturas:180,  comprobantes:412,  clasif:'Grande',  estado:'ganado',  fechaGestion:'15 may 2026', comentarios:[{autor:'Carlos Ríos',iniciales:'CR',fecha:'15 may 2026',texto:'Renovó sin inconvenientes. Muy satisfecho con el servicio.'}] },
+    { id:'133', nombre:'Farmacia Salud Total',        prob:'Alto',  valor:'$1.200.000', plan:'Profesional Retail',       vertical:'Retail',       antiguedad:'29 meses', diasUltima:4,  venceDia:9,  facturas:180,  comprobantes:412,  clasif:'Grande',  estado:'ganado',  fechaGestion:'15 may 2026', validado:true, comentarios:[{autor:'Carlos Ríos',iniciales:'CR',fecha:'15 may 2026',texto:'Renovó sin inconvenientes. Muy satisfecho con el servicio.'}] },
     { id:'856', nombre:'Heladería Polar Express',     prob:'Bajo',  valor:'$480.000',  plan:'Emprendedor Restaurante',   vertical:'Restaurante',  antiguedad:'3 meses',  diasUltima:31, venceDia:27, facturas:8,    comprobantes:18,   clasif:'Pequeño', estado:'perdido', fechaGestion:'03 may 2026', comentarios:[] },
     { id:'477', nombre:'Moda & Estilo Boutique',      prob:'Medio', valor:'$960.000',  plan:'Avanzado Retail',           vertical:'Retail',       antiguedad:'17 meses', diasUltima:5,  venceDia:20, facturas:75,   comprobantes:190,  clasif:'Mediano', estado:'proceso', fechaGestion:null,      comentarios:[{autor:'Ana García',iniciales:'AG',fecha:'22 may 2026',texto:'Interesada en upgrade al plan Premium. Enviar cotización.'}] },
     { id:'622', nombre:'Constructor Obras Civiles',   prob:'Alto',  valor:'$2.400.000', plan:'Profesional Servicios',    vertical:'Servicios',    antiguedad:'40 meses', diasUltima:1,  venceDia:8,  facturas:290,  comprobantes:740,  clasif:'Grande',  estado:'proceso', fechaGestion:null,      comentarios:[] },
@@ -1213,7 +1319,7 @@
     { id:'741', nombre:'Súper Ofertas del Norte',     prob:'Medio', valor:'$1.200.000', plan:'Avanzado Retail',          vertical:'Retail',       antiguedad:'21 meses', diasUltima:6,  venceDia:14, facturas:140,  comprobantes:360,  clasif:'Mediano', estado:'proceso', fechaGestion:null,      comentarios:[] },
     { id:'188', nombre:'Consultora Legal Andina',     prob:'Alto',  valor:'$1.800.000', plan:'Profesional Servicios',    vertical:'Servicios',    antiguedad:'31 meses', diasUltima:2,  venceDia:10, facturas:200,  comprobantes:510,  clasif:'Grande',  estado:'ganado',  fechaGestion:'18 may 2026', comentarios:[{autor:'María Torres',iniciales:'MT',fecha:'18 may 2026',texto:'Renovó y amplió usuarios del plan. Excelente cliente.'}] },
     { id:'523', nombre:'Librería El Saber',           prob:'Medio', valor:'$720.000',  plan:'Emprendedor Retail',        vertical:'Retail',       antiguedad:'11 meses', diasUltima:10, venceDia:28, facturas:45,   comprobantes:108,  clasif:'Pequeño', estado:'proceso', fechaGestion:null,      comentarios:[] },
-    { id:'965', nombre:'Clínica Vida Sana IPS',       prob:'Alto',  valor:'$3.600.000', plan:'Premium Servicios',        vertical:'Servicios',    antiguedad:'52 meses', diasUltima:1,  venceDia:1,  facturas:510,  comprobantes:1340, clasif:'Grande',  estado:'proceso', fechaGestion:null,      comentarios:[{autor:'Carlos Ríos',iniciales:'CR',fecha:'26 may 2026',texto:'Director financiero solicita reunión para revisar condiciones del plan Premium.'}] },
+    { id:'965', nombre:'Clínica Vida Sana IPS',       prob:'Alto',  valor:'$3.600.000', plan:'Premium Servicios',        vertical:'Servicios',    antiguedad:'52 meses', diasUltima:1,  venceDia:16, venceMes:4, facturas:510,  comprobantes:1340, clasif:'Grande',  estado:'proceso', fechaGestion:null,      comentarios:[{autor:'Carlos Ríos',iniciales:'CR',fecha:'26 may 2026',texto:'Director financiero solicita reunión para revisar condiciones del plan Premium.'}] },
     { id:'844', nombre:'Panadería La Espiga de Oro',  prob:'Bajo',  valor:'$480.000',  plan:'Emprendedor Restaurante',   vertical:'Restaurante',  antiguedad:'4 meses',  diasUltima:22, venceDia:19, facturas:15,   comprobantes:33,   clasif:'Pequeño', estado:'perdido', fechaGestion:'05 may 2026', comentarios:[] },
     { id:'271', nombre:'Electrónica Futuro S.A.',     prob:'Alto',  valor:'$2.400.000', plan:'Avanzado Retail',          vertical:'Retail',       antiguedad:'44 meses', diasUltima:3,  venceDia:7,  facturas:320,  comprobantes:870,  clasif:'Grande',  estado:'proceso', fechaGestion:null,      comentarios:[] },
     { id:'618', nombre:'Transporte Rápido Ltda.',     prob:'Medio', valor:'$960.000',  plan:'Emprendedor Servicios',     vertical:'Servicios',    antiguedad:'16 meses', diasUltima:8,  venceDia:23, facturas:62,   comprobantes:155,  clasif:'Mediano', estado:'proceso', fechaGestion:null,      comentarios:[{autor:'Ana García',iniciales:'AG',fecha:'21 may 2026',texto:'Solicita descuento por pronto pago. Escalar a gerencia.'}] },
@@ -1226,7 +1332,7 @@
     { id:'811', nombre:'Tostadora Café de Origen',    prob:'Bajo',  valor:'$480.000',  plan:'Emprendedor Restaurante',   vertical:'Restaurante',  antiguedad:'5 meses',  diasUltima:18, venceDia:26, facturas:11,   comprobantes:26,   clasif:'Pequeño', estado:'perdido', fechaGestion:'01 may 2026', comentarios:[] },
     { id:'659', nombre:'Constructora Cimientos S.A.', prob:'Alto',  valor:'$3.600.000', plan:'Premium Servicios',        vertical:'Servicios',    antiguedad:'55 meses', diasUltima:1,  venceDia:2,  facturas:480,  comprobantes:1200, clasif:'Grande',  estado:'proceso', fechaGestion:null,      comentarios:[{autor:'Carlos Ríos',iniciales:'CR',fecha:'27 may 2026',texto:'Contrato multianual en negociación. Coordinar con equipo jurídico.'}] },
     { id:'283', nombre:'Droguería Pronto Alivio',     prob:'Medio', valor:'$720.000',  plan:'Emprendedor Retail',        vertical:'Retail',       antiguedad:'10 meses', diasUltima:13, venceDia:21, facturas:40,   comprobantes:98,   clasif:'Pequeño', estado:'proceso', fechaGestion:null,      comentarios:[] },
-    { id:'497', nombre:'Spa & Wellness Center',       prob:'Alto',  valor:'$1.800.000', plan:'Profesional Servicios',    vertical:'Servicios',    antiguedad:'27 meses', diasUltima:3,  venceDia:4,  facturas:195,  comprobantes:500,  clasif:'Grande',  estado:'ganado',  fechaGestion:'22 may 2026', comentarios:[{autor:'Ana García',iniciales:'AG',fecha:'22 may 2026',texto:'Renovación exitosa. Cliente solicitó capacitación adicional.'}] },
+    { id:'497', nombre:'Spa & Wellness Center',       prob:'Alto',  valor:'$1.800.000', plan:'Profesional Servicios',    vertical:'Servicios',    antiguedad:'27 meses', diasUltima:3,  venceDia:4,  facturas:195,  comprobantes:500,  clasif:'Grande',  estado:'ganado',  fechaGestion:'22 may 2026', validado:true, comentarios:[{autor:'Ana García',iniciales:'AG',fecha:'22 may 2026',texto:'Renovación exitosa. Cliente solicitó capacitación adicional.'}] },
     { id:'922', nombre:'Muebles Diseño y Arte',       prob:'Bajo',  valor:'$960.000',  plan:'Avanzado Retail',           vertical:'Retail',       antiguedad:'9 meses',  diasUltima:20, venceDia:17, facturas:38,   comprobantes:92,   clasif:'Mediano', estado:'proceso', fechaGestion:null,      comentarios:[] },
     { id:'165', nombre:'Colegio Nuevos Horizontes',   prob:'Alto',  valor:'$2.400.000', plan:'Profesional Servicios',    vertical:'Servicios',    antiguedad:'38 meses', diasUltima:2,  venceDia:13, facturas:260,  comprobantes:680,  clasif:'Grande',  estado:'proceso', fechaGestion:null,      comentarios:[{autor:'Luis Pérez',iniciales:'LP',fecha:'28 may 2026',texto:'Rector muy comprometido con la herramienta. Renovación casi segura.'}] },
     { id:'708', nombre:'Asadero El Rincón Paisa',     prob:'Medio', valor:'$720.000',  plan:'Emprendedor Restaurante',   vertical:'Restaurante',  antiguedad:'12 meses', diasUltima:7,  venceDia:31, facturas:58,   comprobantes:138,  clasif:'Mediano', estado:'proceso', fechaGestion:null,      comentarios:[] },
@@ -1246,25 +1352,43 @@
     return `<span class="chip ${map[c]}">${c}</span>`;
   }
 
+  function diasRestantes(r) {
+    const hoy   = new Date(2026, 5, 1);
+    const mes   = r.venceMes  ?? 5;
+    const anio  = r.venceAnio ?? 2026;
+    const vence = new Date(anio, mes, r.venceDia);
+    return Math.round((vence - hoy) / 86400000);
+  }
+
   function renderTable() {
     const start = (currentPage - 1) * PAGE_SIZE;
     const page  = filtered.slice(start, start + PAGE_SIZE);
     const tbody = document.getElementById('table-body');
-    tbody.innerHTML = page.map(r => `
+    tbody.innerHTML = page.map(r => {
+      const dias = diasRestantes(r);
+      const diasHtml = `<span style="${dias < 0 ? 'color:var(--red);font-weight:600' : ''}">${dias}</span>`;
+      const commentCount = r.comentarios.length;
+      const commentBtn = `<button class="card-comment-btn" onclick="event.stopPropagation();openCommentsFromTable('${r.id}')" title="Comentarios" style="margin-left:6px;vertical-align:middle">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px">
+          <path d="M14 10.5c0 .8-.7 1.5-1.5 1.5H4l-2.5 2.5V3.5C1.5 2.7 2.2 2 3 2h9.5c.8 0 1.5.7 1.5 1.5v7z"/>
+        </svg>${commentCount ? `<span style="font-size:10px;margin-left:2px;color:var(--blue)">${commentCount}</span>` : ''}
+      </button>`;
+      return `
       <tr onclick="openDetail('${r.id}', '${r.nombre}')">
         <td class="muted">${r.id}</td>
         <td>${r.nombre}</td>
-        <td>${probChip(r.prob)}</td>
+        <td><span style="display:inline-flex;align-items:center;gap:0">${probChip(r.prob)}${commentBtn}</span></td>
         <td class="right">${r.valor}</td>
+        <td style="text-align:center">${diasHtml}</td>
         <td>${r.plan}</td>
         <td>${r.vertical}</td>
-        <td class="muted">${r.antiguedad}</td>
-        <td class="muted">${r.ultima}</td>
-        <td class="muted">${r.facturas.toLocaleString()}</td>
-        <td class="muted">${r.comprobantes.toLocaleString()}</td>
+        <td class="muted right">${r.antiguedad}</td>
+        <td class="muted right">${r.diasUltima} días</td>
+        <td class="muted" style="text-align:center">${r.facturas.toLocaleString()}</td>
+        <td class="muted" style="text-align:center">${r.comprobantes.toLocaleString()}</td>
         <td>${clasifChip(r.clasif)}</td>
-      </tr>
-    `).join('');
+      </tr>`;
+    }).join('');
 
     const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
     document.getElementById('records-count').innerHTML = `<span>${filtered.length}</span> registros`;
@@ -1415,10 +1539,10 @@
     const showFecha = currentEstado !== 'proceso';
     const clasifMap = { 'Grande':'chip-grande','Mediano':'chip-mediano','Pequeño':'chip-pequeno' };
     grid.innerHTML = rows.map(r => `
-      <div class="renov-card ${r.estado}${r.importante && r.estado==='proceso'?' importante':''}" onclick="openDetail('${r.id}','${r.nombre}')">
+      <div class="renov-card ${r.estado}${r.importante && r.estado==='proceso'?' importante':''}${r.validado && r.estado==='ganado'?' validado':''}" onclick="openDetail('${r.id}','${r.nombre}')">
         <div class="card-header">
           ${I.calx}
-          <span class="card-day">${r.venceDia}</span>
+          <span class="card-day" style="${r.estado !== 'ganado' && r.venceDia < 15 ? 'color:var(--red)' : ''}">${r.venceDia}</span>
           <span class="importante-star" title="Importante">★</span>
           <div style="margin-left:auto">${probDot(r.prob)}</div>
         </div>
@@ -1459,34 +1583,37 @@
 
   /* ── PROB HISTORY DATA (shared, keyed by id) ── */
   const PROB_HISTORY = {
-    '345': [{iniciales:'CR',autor:'Carlos Ríos',      fecha:'10 abr 2026', prob:'Bajo' },
-            {iniciales:'AG',autor:'Ana García',       fecha:'02 may 2026', prob:'Medio'},
-            {iniciales:'LP',autor:'Luis Pérez',       fecha:'27 may 2026', prob:'Alto' }],
-    '774': [{iniciales:'MT',autor:'María Torres',     fecha:'15 mar 2026', prob:'Medio'},
-            {iniciales:'LP',autor:'Luis Pérez',       fecha:'28 may 2026', prob:'Alto' }],
-    '133': [{iniciales:'AG',autor:'Ana García',       fecha:'20 abr 2026', prob:'Medio'},
-            {iniciales:'CR',autor:'Carlos Ríos',      fecha:'15 may 2026', prob:'Alto' }],
-    '965': [{iniciales:'RG',autor:'Ramiro Guerrero',  fecha:'01 may 2026', prob:'Medio'},
-            {iniciales:'CR',autor:'Carlos Ríos',      fecha:'26 may 2026', prob:'Alto' }],
+    '345': [{iniciales:'CR',autor:'Carlos Ríos',      fecha:'10 abr 2026', prob:'Bajo',  comentario:'Primera evaluación. Cliente recién llegado, sin historial suficiente.' },
+            {iniciales:'AG',autor:'Ana García',       fecha:'02 may 2026', prob:'Medio', comentario:'Respondió bien a la llamada. Hay interés pero aún no hay certeza de presupuesto.' },
+            {iniciales:'LP',autor:'Luis Pérez',       fecha:'27 may 2026', prob:'Alto',  comentario:'Confirmó que tiene el presupuesto aprobado. Alta probabilidad de cierre.' }],
+    '774': [{iniciales:'MT',autor:'María Torres',     fecha:'15 mar 2026', prob:'Medio', comentario:'Cliente grande pero con proceso de aprobación interno largo.' },
+            {iniciales:'LP',autor:'Luis Pérez',       fecha:'28 may 2026', prob:'Alto',  comentario:'Visita presencial realizada. Director comprometido con la renovación.' }],
+    '133': [{iniciales:'AG',autor:'Ana García',       fecha:'20 abr 2026', prob:'Medio', comentario:'Usa la plataforma regularmente pero no ha confirmado intención de renovar.' },
+            {iniciales:'CR',autor:'Carlos Ríos',      fecha:'15 may 2026', prob:'Alto',  comentario:'Renovó sin inconvenientes. Confirmado como ganado.' }],
+    '965': [{iniciales:'RG',autor:'Ramiro Guerrero',  fecha:'01 may 2026', prob:'Medio', comentario:'Cliente estratégico, en espera de reunión con director financiero.' },
+            {iniciales:'CR',autor:'Carlos Ríos',      fecha:'26 may 2026', prob:'Alto',  comentario:'Reunión confirmada para la semana siguiente. Muy positivo.' }],
   };
 
   /* ── COMMENTS ── */
   let activeCommentId = null;
 
-  function openComments(id) {
+  function openComments(id, hideImportante) {
     const r = ROWS.find(x => x.id === id);
     if (!r) return;
     activeCommentId = id;
     document.getElementById('comment-drawer-name').textContent = r.nombre;
-    const sel = document.getElementById('comment-prob-select');
-    sel.value = r.prob;
-    updateProbStyle(sel);
     document.getElementById('comment-importante').checked = !!r.importante;
-    const showImportante = r.estado === 'proceso';
+    const showImportante = !hideImportante && r.estado === 'proceso';
     document.getElementById('importante-label').style.visibility = showImportante ? 'visible' : 'hidden';
+    updateEstadoInlineBtn(r.estado);
+    updateProbInlineBtn(r.prob);
     renderCommentList(r.comentarios);
     document.getElementById('comment-drawer').classList.add('open');
     document.getElementById('backdrop').classList.add('open');
+  }
+
+  function openCommentsFromTable(id) {
+    openComments(id, true);
   }
 
   function updateProbStyle(sel) {
@@ -1525,16 +1652,68 @@
     if (!text) return;
     const r = ROWS.find(x => x.id === activeCommentId);
     if (!r) return;
-    r.comentarios.push({ autor:'Ramiro Guerrero', iniciales:'RG', fecha:'29 may 2026', texto: text });
-    const newProb = document.getElementById('comment-prob-select').value;
-    if (newProb !== r.prob) {
-      if (!PROB_HISTORY[r.id]) PROB_HISTORY[r.id] = [];
-      PROB_HISTORY[r.id].push({ iniciales:'RG', autor:'Ramiro Guerrero', fecha:'29 may 2026', prob: newProb });
-      r.prob = newProb;
-    }
+    r.comentarios.push({ autor:'Ramiro Guerrero', iniciales:'RG', fecha:'15 jun 2026', texto: text });
     input.value = '';
     renderCommentList(r.comentarios);
     renderCards();
+    renderTable();
+  }
+
+  /* ── PROB MODAL ── */
+  let selectedProbOpt = 'Alto';
+
+  const PROB_STYLES = {
+    Alto:  { bg: '#D4F1E7', color: '#00623D' },
+    Medio: { bg: '#FFF0CC', color: '#8A5A00' },
+    Bajo:  { bg: '#FFE0E8', color: '#A30028' },
+  };
+
+  function updateProbInlineBtn(prob) {
+    const btn = document.getElementById('prob-inline-btn');
+    if (!btn) return;
+    const s = PROB_STYLES[prob];
+    btn.textContent = '● ' + prob;
+    btn.style.background = s.bg;
+    btn.style.color = s.color;
+  }
+
+  function openProbModal() {
+    const r = ROWS.find(x => x.id === activeCommentId);
+    if (!r) return;
+    selectedProbOpt = r.prob;
+    document.querySelectorAll('.prob-opt-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('popt-' + r.prob.toLowerCase()).classList.add('active');
+    document.getElementById('prob-comment-input').value = '';
+    document.getElementById('prob-modal').classList.add('open');
+  }
+
+  function closeProbModal(e) {
+    if (e && e.target !== document.getElementById('prob-modal')) return;
+    document.getElementById('prob-modal').classList.remove('open');
+  }
+
+  function selectProbOpt(val, btn) {
+    selectedProbOpt = val;
+    document.querySelectorAll('.prob-opt-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function confirmProb() {
+    const r = ROWS.find(x => x.id === activeCommentId);
+    if (!r) return;
+    const comentario = document.getElementById('prob-comment-input').value.trim();
+    if (!comentario) {
+      document.getElementById('prob-comment-input').style.borderColor = 'var(--red)';
+      return;
+    }
+    document.getElementById('prob-comment-input').style.borderColor = 'var(--gray-line)';
+    if (!PROB_HISTORY[r.id]) PROB_HISTORY[r.id] = [];
+    PROB_HISTORY[r.id].push({ iniciales:'RG', autor:'Ramiro Guerrero', fecha:'15 jun 2026', prob: selectedProbOpt, comentario });
+    r.prob = selectedProbOpt;
+    updateProbInlineBtn(selectedProbOpt);
+    document.getElementById('prob-modal').classList.remove('open');
+    renderCards();
+    renderTable();
   }
 
   function closeComments() {
@@ -1544,6 +1723,112 @@
   }
 
   /* ── PROB HISTORY MODAL ── */
+  /* ── ESTADO MODAL ── */
+  const ESTADO_HISTORY = {
+    '345': [
+      { iniciales:'AG', autor:'Ana García',      fecha:'10 abr 2026', estado:'proceso', comentario:'Iniciando seguimiento. Cliente en etapa de evaluación del presupuesto.' },
+      { iniciales:'LP', autor:'Luis Pérez',      fecha:'15 may 2026', estado:'proceso', comentario:'Mantener en proceso. Propuesta enviada, esperando respuesta del director financiero.' },
+    ],
+    '774': [
+      { iniciales:'MT', autor:'María Torres',    fecha:'01 mar 2026', estado:'proceso', comentario:'Cliente VIP asignado a seguimiento prioritario.' },
+      { iniciales:'LP', autor:'Luis Pérez',      fecha:'10 may 2026', estado:'proceso', comentario:'Visita presencial programada. Alta probabilidad de cierre.' },
+    ],
+    '133': [
+      { iniciales:'AG', autor:'Ana García',      fecha:'05 abr 2026', estado:'proceso', comentario:'Cliente activo, responde rápido. Buen candidato para renovación anticipada.' },
+      { iniciales:'CR', autor:'Carlos Ríos',     fecha:'15 may 2026', estado:'ganado',  comentario:'Renovó sin inconvenientes. Pagó de contado. Registrar como ganado.' },
+    ],
+    '188': [
+      { iniciales:'MT', autor:'María Torres',    fecha:'12 abr 2026', estado:'proceso', comentario:'Primera llamada realizada. Cliente interesado en mantener el plan.' },
+      { iniciales:'MT', autor:'María Torres',    fecha:'18 may 2026', estado:'ganado',  comentario:'Renovó y amplió usuarios. Solicitar caso de éxito para marketing.' },
+    ],
+    '201': [
+      { iniciales:'AG', autor:'Ana García',      fecha:'20 abr 2026', estado:'proceso', comentario:'Cliente con señales de baja, contactar urgente.' },
+      { iniciales:'AG', autor:'Ana García',      fecha:'08 may 2026', estado:'perdido', comentario:'Cliente decidió no renovar por problemas de caja. Registrar como perdido.' },
+    ],
+  };
+  let selectedEstadoOpt = 'proceso';
+
+  const ESTADO_LABELS = { proceso:'En proceso', ganado:'Ganado', perdido:'Perdido' };
+  const ESTADO_COLORS = { proceso: 'var(--blue)', ganado: '#00875A', perdido: 'var(--red)' };
+
+  function updateEstadoInlineBtn(estado) {
+    const btn = document.getElementById('estado-inline-btn');
+    if (!btn) return;
+    btn.textContent = ESTADO_LABELS[estado] || estado;
+    btn.style.color = ESTADO_COLORS[estado] || 'var(--text)';
+  }
+
+  function openEstadoModal() {
+    const r = ROWS.find(x => x.id === activeCommentId);
+    if (!r) return;
+    selectedEstadoOpt = r.estado;
+    document.querySelectorAll('.estado-opt-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('opt-' + r.estado).classList.add('active');
+    document.getElementById('estado-comment-input').value = '';
+    document.getElementById('estado-modal').classList.add('open');
+  }
+
+  function closeEstadoModal(e) {
+    if (e && e.target !== document.getElementById('estado-modal')) return;
+    document.getElementById('estado-modal').classList.remove('open');
+  }
+
+  function selectEstadoOpt(val, btn) {
+    selectedEstadoOpt = val;
+    document.querySelectorAll('.estado-opt-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function confirmEstado() {
+    const r = ROWS.find(x => x.id === activeCommentId);
+    if (!r) return;
+    const comentario = document.getElementById('estado-comment-input').value.trim();
+    if (!comentario) {
+      document.getElementById('estado-comment-input').style.borderColor = 'var(--red)';
+      return;
+    }
+    document.getElementById('estado-comment-input').style.borderColor = 'var(--gray-line)';
+    if (!ESTADO_HISTORY[r.id]) ESTADO_HISTORY[r.id] = [];
+    ESTADO_HISTORY[r.id].push({ iniciales:'RG', autor:'Ramiro Guerrero', fecha:'15 jun 2026', estado: selectedEstadoOpt, comentario });
+    r.estado = selectedEstadoOpt;
+    if (selectedEstadoOpt !== 'proceso') r.fechaGestion = '15 jun 2026';
+    updateEstadoInlineBtn(selectedEstadoOpt);
+    document.getElementById('estado-modal').classList.remove('open');
+    renderCards();
+    renderTable();
+  }
+
+  function openEstadoHistory() {
+    const r = ROWS.find(x => x.id === activeCommentId);
+    if (!r) return;
+    const history = ESTADO_HISTORY[r.id] || [];
+    const body = document.getElementById('estado-history-body');
+    const LABELS = { proceso: 'En proceso', ganado: 'Ganado', perdido: 'Perdido' };
+    if (!history.length) {
+      body.innerHTML = `<div style="color:var(--gray-text);font-size:13px;text-align:center;padding:24px 0">Sin cambios de estado registrados.</div>`;
+    } else {
+      body.innerHTML = history.map(h => `
+        <div class="estado-history-item">
+          <div class="prob-history-avatar">${h.iniciales}</div>
+          <div class="prob-history-info" style="flex:1">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span class="prob-history-name">${h.autor}</span>
+              <span class="prob-history-date">${h.fecha}</span>
+              <span class="estado-tag ${h.estado}">${LABELS[h.estado]}</span>
+            </div>
+            <div class="estado-history-comment">${h.comentario}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+    document.getElementById('estado-history-modal').classList.add('open');
+  }
+
+  function closeEstadoHistory(e) {
+    if (e && e.target !== document.getElementById('estado-history-modal')) return;
+    document.getElementById('estado-history-modal').classList.remove('open');
+  }
+
   function openProbHistory() {
     const r = ROWS.find(x => x.id === activeCommentId);
     if (!r) return;
@@ -1555,11 +1840,14 @@
       body.innerHTML = history.map(h => `
         <div class="prob-history-item">
           <div class="prob-history-avatar">${h.iniciales}</div>
-          <div class="prob-history-info">
-            <div class="prob-history-name">${h.autor}</div>
-            <div class="prob-history-date">${h.fecha}</div>
+          <div class="prob-history-info" style="flex:1">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span class="prob-history-name">${h.autor}</span>
+              <span class="prob-history-date">${h.fecha}</span>
+              <span class="prob-tag ${h.prob.toLowerCase()}">${h.prob}</span>
+            </div>
+            ${h.comentario ? `<div class="estado-history-comment">${h.comentario}</div>` : ''}
           </div>
-          <span class="prob-tag ${h.prob.toLowerCase()}">${h.prob}</span>
         </div>
       `).join('');
     }
