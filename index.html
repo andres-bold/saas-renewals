@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     :root {
       --red:       #E8003D;
@@ -1008,7 +1009,7 @@
           <span class="search-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><circle cx="6.5" cy="6.5" r="4"/><path d="M11 11l3 3"/></svg></span>
           <input type="text" placeholder="Titular, comercio, ID POS, correo…" oninput="filterTable(this.value)" />
         </div>
-        <button class="btn btn-outline">
+        <button class="btn btn-outline" onclick="openDownloadModal()">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M8 2v9M4 8l4 4 4-4M2 14h12"/></svg> Descargar
         </button>
         <div class="sort-wrap">
@@ -1039,6 +1040,7 @@
               <th>Prob. renovación</th>
               <th style="text-align:right">Valor a pagar</th>
               <th style="text-align:center">Días restantes</th>
+              <th>Pipeline</th>
               <th>Plan actual</th>
               <th>Vertical</th>
               <th style="text-align:right">Antigüedad</th>
@@ -1071,7 +1073,7 @@
           <span class="search-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><circle cx="6.5" cy="6.5" r="4"/><path d="M11 11l3 3"/></svg></span>
           <input type="text" placeholder="Titular, comercio, ID POS, correo…" />
         </div>
-        <button class="btn btn-outline"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M8 2v9M4 8l4 4 4-4M2 14h12"/></svg> Descargar</button>
+        <button class="btn btn-outline" onclick="openDownloadModal()"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M8 2v9M4 8l4 4 4-4M2 14h12"/></svg> Descargar</button>
         <button class="btn btn-outline" onclick="openDrawer()"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M2 3h12M5 8h6M7 13h2"/></svg> Filtrar</button>
         <div style="flex:1"></div>
         <div class="month-nav">
@@ -1330,6 +1332,20 @@
       </div>
     </div>
     <div class="filter-group">
+      <label>Pipeline</label>
+      <div class="select-wrap">
+        <select id="filter-pipeline" onchange="applyFilters()">
+          <option value="">Seleccione</option>
+          <option>Contacto inicial</option>
+          <option>En seguimiento</option>
+          <option>Propuesta enviada</option>
+          <option>En negociación</option>
+          <option>Decisión pendiente</option>
+          <option>En cierre</option>
+        </select>
+      </div>
+    </div>
+    <div class="filter-group">
       <label>Probabilidad de renovación</label>
       <div class="select-wrap">
         <select><option value="">Seleccione</option><option>Alto</option><option>Medio</option><option>Bajo</option></select>
@@ -1378,6 +1394,37 @@
         <button class="estado-opt-btn ganado" id="opt-ganado"  onclick="selectEstadoOpt('ganado',this)">Ganado</button>
         <button class="estado-opt-btn perdido" id="opt-perdido" onclick="selectEstadoOpt('perdido',this)">Perdido</button>
       </div>
+      <!-- Pipeline — solo visible cuando se selecciona "En proceso" -->
+      <div id="pipeline-row" style="display:none;flex-direction:column;gap:6px">
+        <label style="font-size:11px;font-weight:600;color:var(--gray-text)">Pipeline</label>
+        <div class="select-wrap">
+          <select id="pipeline-select" style="width:100%;padding:9px 12px;border:1px solid var(--gray-line);border-radius:8px;font-size:13px;font-family:inherit;color:var(--text);background:var(--white);appearance:none;outline:none;cursor:pointer">
+            <option value="">Selecciona una etapa…</option>
+            <option value="Contacto inicial">Contacto inicial</option>
+            <option value="En seguimiento">En seguimiento</option>
+            <option value="Propuesta enviada">Propuesta enviada</option>
+            <option value="En negociación">En negociación</option>
+            <option value="Decisión pendiente">Decisión pendiente</option>
+            <option value="En cierre">En cierre</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Motivo de pérdida — solo visible cuando se selecciona "Perdido" -->
+      <div id="motivo-row" style="display:none;flex-direction:column;gap:6px">
+        <label style="font-size:11px;font-weight:600;color:var(--gray-text)">Motivo de pérdida</label>
+        <div class="select-wrap">
+          <select id="motivo-select" style="width:100%;padding:9px 12px;border:1px solid var(--gray-line);border-radius:8px;font-size:13px;font-family:inherit;color:var(--text);background:var(--white);appearance:none;outline:none;cursor:pointer">
+            <option value="">Selecciona un motivo…</option>
+            <option value="Ilocalizable">Ilocalizable</option>
+            <option value="Cambio de proveedor">Cambio de proveedor</option>
+            <option value="Precio alto">Precio alto</option>
+            <option value="Funcionalidad faltante">Funcionalidad faltante</option>
+            <option value="Cerré el negocio">Cerré el negocio</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+      </div>
       <textarea id="estado-comment-input" placeholder="Agrega un comentario sobre este cambio de estado…" style="width:100%;min-height:80px;resize:vertical;border:1px solid var(--gray-line);border-radius:8px;padding:10px 12px;font-family:inherit;font-size:13px;color:var(--text);outline:none"></textarea>
     </div>
     <div style="display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;border-top:1px solid var(--gray-line)">
@@ -1403,6 +1450,39 @@
 <!-- ═══════════════════════════════════════════
      PROB CHANGE MODAL
 ═══════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════
+     DOWNLOAD MODAL
+═══════════════════════════════════════════ -->
+<div class="center-modal-backdrop" id="download-modal" onclick="closeDownloadModal(event)">
+  <div class="center-modal" style="max-width:400px">
+    <div class="center-modal-header">
+      <span class="center-modal-title">Descargar registros</span>
+      <button class="drawer-close" onclick="closeDownloadModal()">✕</button>
+    </div>
+    <div class="center-modal-body" style="gap:14px">
+      <p style="font-size:13px;color:var(--gray-text);margin:0">Selecciona el rango de fechas de vencimiento de las suscripciones que deseas exportar.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <label style="font-size:11px;font-weight:600;color:var(--gray-text)">Fecha desde</label>
+          <input type="date" id="download-desde" style="padding:9px 12px;border:1px solid var(--gray-line);border-radius:8px;font-size:13px;font-family:inherit;color:var(--text);outline:none;cursor:pointer" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--gray-line)'" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <label style="font-size:11px;font-weight:600;color:var(--gray-text)">Fecha hasta</label>
+          <input type="date" id="download-hasta" style="padding:9px 12px;border:1px solid var(--gray-line);border-radius:8px;font-size:13px;font-family:inherit;color:var(--text);outline:none;cursor:pointer" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--gray-line)'" />
+        </div>
+      </div>
+      <p id="download-error" style="font-size:12px;color:var(--red);display:none;margin:0">Por favor selecciona ambas fechas para continuar.</p>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;border-top:1px solid var(--gray-line)">
+      <button class="btn btn-outline" style="padding:7px 16px;font-size:12px" onclick="closeDownloadModal()">Cancelar</button>
+      <button class="btn btn-primary" style="padding:7px 16px;font-size:12px;display:flex;align-items:center;gap:6px" onclick="confirmDownload()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><path d="M8 2v9M4 8l4 4 4-4M2 14h12"/></svg>
+        Descargar
+      </button>
+    </div>
+  </div>
+</div>
+
 <div class="center-modal-backdrop" id="prob-modal" onclick="closeProbModal(event)">
   <div class="center-modal" style="max-width:420px">
     <div class="center-modal-header">
@@ -1469,7 +1549,8 @@
     </div><!-- /prob-select-row -->
 
     <!-- Estado de renovación -->
-    <div style="display:flex;align-items:center;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--gray-line)">
+    <div style="display:flex;flex-direction:column;gap:0;margin-top:10px;padding-top:10px;border-top:1px solid var(--gray-line)">
+    <div style="display:flex;align-items:center;gap:6px">
       <span style="font-size:11px;font-weight:600;color:var(--gray-text);white-space:nowrap">Estado de renovación:</span>
       <button id="estado-inline-btn" onclick="openEstadoModal()" style="border:none;background:none;cursor:pointer;padding:0;font-family:inherit;font-size:12px;font-weight:700"></button>
       <button class="prob-history-btn has-tip" data-tip="Historial de estado" onclick="openEstadoHistory()">
@@ -1477,7 +1558,8 @@
           <path d="M2 8a6 6 0 1 0 6-6V4"/><path d="M8 2L6 4l2 2"/><path d="M8 6v3l2 1"/>
         </svg>
       </button>
-    </div>
+    </div><!-- /fila estado+historial -->
+    </div><!-- /estado-col -->
   </div><!-- /comment-drawer-header -->
   <div class="comment-list" id="comment-list"></div>
   <div class="comment-add">
@@ -1492,38 +1574,38 @@
 <script>
   /* ── DATA ── */
   const ROWS = [
-    { id:'345', nombre:'Restaurante Josefina',       prob:'Alto',  valor:'$2.400.000', plan:'Profesional Restaurante',  vertical:'Restaurante', antiguedad:'23 meses', diasUltima:3,  venceDia:12, facturas:120,  comprobantes:345,  clasif:'Grande',  estado:'proceso', fechaGestion:null,      comentarios:[{autor:'Ana García',iniciales:'AG',fecha:'24 may 2026',texto:'Cliente muy interesado, tiene presupuesto aprobado. Confirmar llamada para el viernes.'},{autor:'Luis Pérez',iniciales:'LP',fecha:'27 may 2026',texto:'Envié propuesta actualizada con descuento del 5%. Espero respuesta.'}] },
-    { id:'512', nombre:'Tienda Don Álvaro',           prob:'Medio', valor:'$960.000',  plan:'Emprendedor Retail',        vertical:'Retail',       antiguedad:'8 meses',  diasUltima:12, venceDia:18, facturas:34,   comprobantes:91,   clasif:'Pequeño', estado:'proceso', fechaGestion:null,      comentarios:[{autor:'Carlos Ríos',iniciales:'CR',fecha:'20 may 2026',texto:'No ha respondido los últimos 2 correos. Intentar por WhatsApp.'}] },
+    { id:'345', nombre:'Restaurante Josefina',       prob:'Alto',  valor:'$2.400.000', plan:'Profesional Restaurante',  vertical:'Restaurante', antiguedad:'23 meses', diasUltima:3,  venceDia:12, facturas:120,  comprobantes:345,  clasif:'Grande',  estado:'proceso', pipeline:'En negociación', fechaGestion:null,      comentarios:[{autor:'Ana García',iniciales:'AG',fecha:'24 may 2026',texto:'Cliente muy interesado, tiene presupuesto aprobado. Confirmar llamada para el viernes.'},{autor:'Luis Pérez',iniciales:'LP',fecha:'27 may 2026',texto:'Envié propuesta actualizada con descuento del 5%. Espero respuesta.'}] },
+    { id:'512', nombre:'Tienda Don Álvaro',           prob:'Medio', valor:'$960.000',  plan:'Emprendedor Retail',        vertical:'Retail',       antiguedad:'8 meses',  diasUltima:12, venceDia:18, facturas:34,   comprobantes:91,   clasif:'Pequeño', estado:'proceso', fechaGestion:null, pipeline:'Contacto inicial',      comentarios:[{autor:'Carlos Ríos',iniciales:'CR',fecha:'20 may 2026',texto:'No ha respondido los últimos 2 correos. Intentar por WhatsApp.'}] },
     { id:'689', nombre:'Papelería Central Ltda.',     prob:'Alto',  valor:'$1.800.000', plan:'Avanzado Retail',          vertical:'Retail',       antiguedad:'36 meses', diasUltima:1,  venceDia:27, venceMes:4, facturas:210,  comprobantes:580,  clasif:'Grande',  estado:'ganado',  fechaGestion:'12 may 2026', validado:true, comentarios:[] },
-    { id:'201', nombre:'Café La Candelaria',          prob:'Bajo',  valor:'$480.000',  plan:'Emprendedor Restaurante',   vertical:'Restaurante',  antiguedad:'5 meses',  diasUltima:28, venceDia:22, facturas:12,   comprobantes:29,   clasif:'Pequeño', estado:'perdido', fechaGestion:'08 may 2026', comentarios:[{autor:'Ana García',iniciales:'AG',fecha:'08 may 2026',texto:'Cliente decidió no renovar por problemas de caja. Registrar como perdido.'}] },
-    { id:'774', nombre:'Distribuidora El Éxito S.A.', prob:'Alto',  valor:'$3.600.000', plan:'Premium Retail',           vertical:'Retail',       antiguedad:'48 meses', diasUltima:2,  venceDia:23, venceMes:4, facturas:430,  comprobantes:1120, clasif:'Grande',  estado:'proceso', fechaGestion:null,      comentarios:[{autor:'Luis Pérez',iniciales:'LP',fecha:'25 may 2026',texto:'Cliente VIP. Agendar visita presencial antes del vencimiento.'},{autor:'María Torres',iniciales:'MT',fecha:'28 may 2026',texto:'Visita confirmada para el 2 de junio.'}] },
-    { id:'390', nombre:'Servicios Click S.A.S.',      prob:'Medio', valor:'$720.000',  plan:'Emprendedor Servicios',     vertical:'Servicios',    antiguedad:'14 meses', diasUltima:7,  venceDia:15, facturas:55,   comprobantes:130,  clasif:'Mediano', estado:'proceso', fechaGestion:null,      comentarios:[] },
+    { id:'201', nombre:'Café La Candelaria',          prob:'Bajo',  valor:'$480.000',  plan:'Emprendedor Restaurante',   vertical:'Restaurante',  antiguedad:'5 meses',  diasUltima:28, venceDia:22, facturas:12,   comprobantes:29,   clasif:'Pequeño', estado:'perdido', fechaGestion:'08 may 2026', motivoPerdida:'Cerré el negocio', comentarios:[{autor:'Ana García',iniciales:'AG',fecha:'08 may 2026',texto:'Cliente decidió no renovar por problemas de caja. Registrar como perdido.'}] },
+    { id:'774', nombre:'Distribuidora El Éxito S.A.', prob:'Alto',  valor:'$3.600.000', plan:'Premium Retail',           vertical:'Retail',       antiguedad:'48 meses', diasUltima:2,  venceDia:23, venceMes:4, facturas:430,  comprobantes:1120, clasif:'Grande',  estado:'proceso', pipeline:'Propuesta enviada', fechaGestion:null,      comentarios:[{autor:'Luis Pérez',iniciales:'LP',fecha:'25 may 2026',texto:'Cliente VIP. Agendar visita presencial antes del vencimiento.'},{autor:'María Torres',iniciales:'MT',fecha:'28 may 2026',texto:'Visita confirmada para el 2 de junio.'}] },
+    { id:'390', nombre:'Servicios Click S.A.S.',      prob:'Medio', valor:'$720.000',  plan:'Emprendedor Servicios',     vertical:'Servicios',    antiguedad:'14 meses', diasUltima:7,  venceDia:15, facturas:55,   comprobantes:130,  clasif:'Mediano', estado:'proceso', fechaGestion:null, pipeline:'En seguimiento',      comentarios:[] },
     { id:'133', nombre:'Farmacia Salud Total',        prob:'Alto',  valor:'$1.200.000', plan:'Profesional Retail',       vertical:'Retail',       antiguedad:'29 meses', diasUltima:4,  venceDia:9,  facturas:180,  comprobantes:412,  clasif:'Grande',  estado:'ganado',  fechaGestion:'15 may 2026', validado:true, comentarios:[{autor:'Carlos Ríos',iniciales:'CR',fecha:'15 may 2026',texto:'Renovó sin inconvenientes. Muy satisfecho con el servicio.'}] },
-    { id:'856', nombre:'Heladería Polar Express',     prob:'Bajo',  valor:'$480.000',  plan:'Emprendedor Restaurante',   vertical:'Restaurante',  antiguedad:'3 meses',  diasUltima:31, venceDia:27, facturas:8,    comprobantes:18,   clasif:'Pequeño', estado:'perdido', fechaGestion:'03 may 2026', comentarios:[] },
-    { id:'477', nombre:'Moda & Estilo Boutique',      prob:'Medio', valor:'$960.000',  plan:'Avanzado Retail',           vertical:'Retail',       antiguedad:'17 meses', diasUltima:5,  venceDia:20, facturas:75,   comprobantes:190,  clasif:'Mediano', estado:'proceso', fechaGestion:null,      comentarios:[{autor:'Ana García',iniciales:'AG',fecha:'22 may 2026',texto:'Interesada en upgrade al plan Premium. Enviar cotización.'}] },
-    { id:'622', nombre:'Constructor Obras Civiles',   prob:'Alto',  valor:'$2.400.000', plan:'Profesional Servicios',    vertical:'Servicios',    antiguedad:'40 meses', diasUltima:1,  venceDia:8,  facturas:290,  comprobantes:740,  clasif:'Grande',  estado:'proceso', fechaGestion:null,      comentarios:[] },
-    { id:'309', nombre:'Arepas & Más S.A.S.',         prob:'Bajo',  valor:'$480.000',  plan:'Emprendedor Restaurante',   vertical:'Restaurante',  antiguedad:'6 meses',  diasUltima:19, venceDia:25, facturas:20,   comprobantes:44,   clasif:'Pequeño', estado:'perdido', fechaGestion:'10 may 2026', comentarios:[{autor:'Luis Pérez',iniciales:'LP',fecha:'10 may 2026',texto:'No pudo costear la renovación este ciclo. Seguimiento en 3 meses.'}] },
-    { id:'741', nombre:'Súper Ofertas del Norte',     prob:'Medio', valor:'$1.200.000', plan:'Avanzado Retail',          vertical:'Retail',       antiguedad:'21 meses', diasUltima:6,  venceDia:14, facturas:140,  comprobantes:360,  clasif:'Mediano', estado:'proceso', fechaGestion:null,      comentarios:[] },
+    { id:'856', nombre:'Heladería Polar Express',     prob:'Bajo',  valor:'$480.000',  plan:'Emprendedor Restaurante',   vertical:'Restaurante',  antiguedad:'3 meses',  diasUltima:31, venceDia:27, facturas:8,    comprobantes:18,   clasif:'Pequeño', estado:'perdido', fechaGestion:'03 may 2026', motivoPerdida:'Ilocalizable', comentarios:[] },
+    { id:'477', nombre:'Moda & Estilo Boutique',      prob:'Medio', valor:'$960.000',  plan:'Avanzado Retail',           vertical:'Retail',       antiguedad:'17 meses', diasUltima:5,  venceDia:20, facturas:75,   comprobantes:190,  clasif:'Mediano', estado:'proceso', fechaGestion:null, pipeline:'Propuesta enviada',      comentarios:[{autor:'Ana García',iniciales:'AG',fecha:'22 may 2026',texto:'Interesada en upgrade al plan Premium. Enviar cotización.'}] },
+    { id:'622', nombre:'Constructor Obras Civiles',   prob:'Alto',  valor:'$2.400.000', plan:'Profesional Servicios',    vertical:'Servicios',    antiguedad:'40 meses', diasUltima:1,  venceDia:8,  facturas:290,  comprobantes:740,  clasif:'Grande',  estado:'proceso', fechaGestion:null, pipeline:'En cierre',      comentarios:[] },
+    { id:'309', nombre:'Arepas & Más S.A.S.',         prob:'Bajo',  valor:'$480.000',  plan:'Emprendedor Restaurante',   vertical:'Restaurante',  antiguedad:'6 meses',  diasUltima:19, venceDia:25, facturas:20,   comprobantes:44,   clasif:'Pequeño', estado:'perdido', fechaGestion:'10 may 2026', motivoPerdida:'Precio alto', comentarios:[{autor:'Luis Pérez',iniciales:'LP',fecha:'10 may 2026',texto:'No pudo costear la renovación este ciclo. Seguimiento en 3 meses.'}] },
+    { id:'741', nombre:'Súper Ofertas del Norte',     prob:'Medio', valor:'$1.200.000', plan:'Avanzado Retail',          vertical:'Retail',       antiguedad:'21 meses', diasUltima:6,  venceDia:14, facturas:140,  comprobantes:360,  clasif:'Mediano', estado:'proceso', fechaGestion:null, pipeline:'En negociación',      comentarios:[] },
     { id:'188', nombre:'Consultora Legal Andina',     prob:'Alto',  valor:'$1.800.000', plan:'Profesional Servicios',    vertical:'Servicios',    antiguedad:'31 meses', diasUltima:2,  venceDia:10, facturas:200,  comprobantes:510,  clasif:'Grande',  estado:'ganado',  fechaGestion:'18 may 2026', comentarios:[{autor:'María Torres',iniciales:'MT',fecha:'18 may 2026',texto:'Renovó y amplió usuarios del plan. Excelente cliente.'}] },
     { id:'523', nombre:'Librería El Saber',           prob:'Medio', valor:'$720.000',  plan:'Emprendedor Retail',        vertical:'Retail',       antiguedad:'11 meses', diasUltima:10, venceDia:28, facturas:45,   comprobantes:108,  clasif:'Pequeño', estado:'proceso', fechaGestion:null,      comentarios:[] },
-    { id:'965', nombre:'Clínica Vida Sana IPS',       prob:'Alto',  valor:'$3.600.000', plan:'Premium Servicios',        vertical:'Servicios',    antiguedad:'52 meses', diasUltima:1,  venceDia:16, venceMes:4, facturas:510,  comprobantes:1340, clasif:'Grande',  estado:'proceso', fechaGestion:null,      comentarios:[{autor:'Carlos Ríos',iniciales:'CR',fecha:'26 may 2026',texto:'Director financiero solicita reunión para revisar condiciones del plan Premium.'}] },
-    { id:'844', nombre:'Panadería La Espiga de Oro',  prob:'Bajo',  valor:'$480.000',  plan:'Emprendedor Restaurante',   vertical:'Restaurante',  antiguedad:'4 meses',  diasUltima:22, venceDia:19, facturas:15,   comprobantes:33,   clasif:'Pequeño', estado:'perdido', fechaGestion:'05 may 2026', comentarios:[] },
-    { id:'271', nombre:'Electrónica Futuro S.A.',     prob:'Alto',  valor:'$2.400.000', plan:'Avanzado Retail',          vertical:'Retail',       antiguedad:'44 meses', diasUltima:3,  venceDia:7,  facturas:320,  comprobantes:870,  clasif:'Grande',  estado:'proceso', fechaGestion:null,      comentarios:[] },
-    { id:'618', nombre:'Transporte Rápido Ltda.',     prob:'Medio', valor:'$960.000',  plan:'Emprendedor Servicios',     vertical:'Servicios',    antiguedad:'16 meses', diasUltima:8,  venceDia:23, facturas:62,   comprobantes:155,  clasif:'Mediano', estado:'proceso', fechaGestion:null,      comentarios:[{autor:'Ana García',iniciales:'AG',fecha:'21 may 2026',texto:'Solicita descuento por pronto pago. Escalar a gerencia.'}] },
+    { id:'965', nombre:'Clínica Vida Sana IPS',       prob:'Alto',  valor:'$3.600.000', plan:'Premium Servicios',        vertical:'Servicios',    antiguedad:'52 meses', diasUltima:1,  venceDia:16, venceMes:4, facturas:510,  comprobantes:1340, clasif:'Grande',  estado:'proceso', pipeline:'En cierre', fechaGestion:null,      comentarios:[{autor:'Carlos Ríos',iniciales:'CR',fecha:'26 may 2026',texto:'Director financiero solicita reunión para revisar condiciones del plan Premium.'}] },
+    { id:'844', nombre:'Panadería La Espiga de Oro',  prob:'Bajo',  valor:'$480.000',  plan:'Emprendedor Restaurante',   vertical:'Restaurante',  antiguedad:'4 meses',  diasUltima:22, venceDia:19, facturas:15,   comprobantes:33,   clasif:'Pequeño', estado:'perdido', fechaGestion:'05 may 2026', motivoPerdida:'Funcionalidad faltante', comentarios:[] },
+    { id:'271', nombre:'Electrónica Futuro S.A.',     prob:'Alto',  valor:'$2.400.000', plan:'Avanzado Retail',          vertical:'Retail',       antiguedad:'44 meses', diasUltima:3,  venceDia:7,  facturas:320,  comprobantes:870,  clasif:'Grande',  estado:'proceso', fechaGestion:null, pipeline:'En cierre',      comentarios:[] },
+    { id:'618', nombre:'Transporte Rápido Ltda.',     prob:'Medio', valor:'$960.000',  plan:'Emprendedor Servicios',     vertical:'Servicios',    antiguedad:'16 meses', diasUltima:8,  venceDia:23, facturas:62,   comprobantes:155,  clasif:'Mediano', estado:'proceso', fechaGestion:null, pipeline:'En negociación',      comentarios:[{autor:'Ana García',iniciales:'AG',fecha:'21 may 2026',texto:'Solicita descuento por pronto pago. Escalar a gerencia.'}] },
     { id:'453', nombre:'Ferretería Los Tornillos',    prob:'Bajo',  valor:'$720.000',  plan:'Emprendedor Retail',        vertical:'Retail',       antiguedad:'7 meses',  diasUltima:15, venceDia:29, facturas:28,   comprobantes:66,   clasif:'Pequeño', estado:'proceso', fechaGestion:null,      comentarios:[] },
     { id:'730', nombre:'Instituto de Idiomas Global', prob:'Alto',  valor:'$1.800.000', plan:'Profesional Servicios',    vertical:'Servicios',    antiguedad:'33 meses', diasUltima:2,  venceDia:6,  facturas:230,  comprobantes:590,  clasif:'Grande',  estado:'ganado',  fechaGestion:'20 may 2026', comentarios:[{autor:'Luis Pérez',iniciales:'LP',fecha:'20 may 2026',texto:'Renovó anticipado. Aplicar descuento fidelidad del 8%.'}] },
     { id:'192', nombre:'Restaurante Mar Azul',        prob:'Medio', valor:'$1.200.000', plan:'Avanzado Restaurante',     vertical:'Restaurante',  antiguedad:'19 meses', diasUltima:9,  venceDia:16, facturas:100,  comprobantes:260,  clasif:'Mediano', estado:'proceso', fechaGestion:null,      comentarios:[] },
     { id:'867', nombre:'Minimercado La Esquina',      prob:'Bajo',  valor:'$480.000',  plan:'Emprendedor Retail',        vertical:'Retail',       antiguedad:'2 meses',  diasUltima:25, venceDia:30, facturas:9,    comprobantes:22,   clasif:'Pequeño', estado:'proceso', fechaGestion:null,      comentarios:[] },
-    { id:'544', nombre:'Óptica Visión Clara',         prob:'Alto',  valor:'$1.200.000', plan:'Profesional Retail',       vertical:'Retail',       antiguedad:'26 meses', diasUltima:4,  venceDia:11, facturas:160,  comprobantes:420,  clasif:'Grande',  estado:'proceso', fechaGestion:null,      comentarios:[{autor:'María Torres',iniciales:'MT',fecha:'23 may 2026',texto:'Muy activo en uso de la plataforma. Alta probabilidad de renovación.'}] },
+    { id:'544', nombre:'Óptica Visión Clara',         prob:'Alto',  valor:'$1.200.000', plan:'Profesional Retail',       vertical:'Retail',       antiguedad:'26 meses', diasUltima:4,  venceDia:11, facturas:160,  comprobantes:420,  clasif:'Grande',  estado:'proceso', fechaGestion:null, pipeline:'Propuesta enviada',      comentarios:[{autor:'María Torres',iniciales:'MT',fecha:'23 may 2026',texto:'Muy activo en uso de la plataforma. Alta probabilidad de renovación.'}] },
     { id:'376', nombre:'Agencia de Viajes Xplora',    prob:'Medio', valor:'$960.000',  plan:'Emprendedor Servicios',     vertical:'Servicios',    antiguedad:'13 meses', diasUltima:11, venceDia:24, facturas:52,   comprobantes:125,  clasif:'Mediano', estado:'proceso', fechaGestion:null,      comentarios:[] },
-    { id:'811', nombre:'Tostadora Café de Origen',    prob:'Bajo',  valor:'$480.000',  plan:'Emprendedor Restaurante',   vertical:'Restaurante',  antiguedad:'5 meses',  diasUltima:18, venceDia:26, facturas:11,   comprobantes:26,   clasif:'Pequeño', estado:'perdido', fechaGestion:'01 may 2026', comentarios:[] },
-    { id:'659', nombre:'Constructora Cimientos S.A.', prob:'Alto',  valor:'$3.600.000', plan:'Premium Servicios',        vertical:'Servicios',    antiguedad:'55 meses', diasUltima:1,  venceDia:2,  facturas:480,  comprobantes:1200, clasif:'Grande',  estado:'proceso', fechaGestion:null,      comentarios:[{autor:'Carlos Ríos',iniciales:'CR',fecha:'27 may 2026',texto:'Contrato multianual en negociación. Coordinar con equipo jurídico.'}] },
+    { id:'811', nombre:'Tostadora Café de Origen',    prob:'Bajo',  valor:'$480.000',  plan:'Emprendedor Restaurante',   vertical:'Restaurante',  antiguedad:'5 meses',  diasUltima:18, venceDia:26, facturas:11,   comprobantes:26,   clasif:'Pequeño', estado:'perdido', fechaGestion:'01 may 2026', motivoPerdida:'Ilocalizable', comentarios:[] },
+    { id:'659', nombre:'Constructora Cimientos S.A.', prob:'Alto',  valor:'$3.600.000', plan:'Premium Servicios',        vertical:'Servicios',    antiguedad:'55 meses', diasUltima:1,  venceDia:2,  facturas:480,  comprobantes:1200, clasif:'Grande',  estado:'proceso', fechaGestion:null, pipeline:'En negociación',      comentarios:[{autor:'Carlos Ríos',iniciales:'CR',fecha:'27 may 2026',texto:'Contrato multianual en negociación. Coordinar con equipo jurídico.'}] },
     { id:'283', nombre:'Droguería Pronto Alivio',     prob:'Medio', valor:'$720.000',  plan:'Emprendedor Retail',        vertical:'Retail',       antiguedad:'10 meses', diasUltima:13, venceDia:21, facturas:40,   comprobantes:98,   clasif:'Pequeño', estado:'proceso', fechaGestion:null,      comentarios:[] },
     { id:'497', nombre:'Spa & Wellness Center',       prob:'Alto',  valor:'$1.800.000', plan:'Profesional Servicios',    vertical:'Servicios',    antiguedad:'27 meses', diasUltima:3,  venceDia:4,  facturas:195,  comprobantes:500,  clasif:'Grande',  estado:'ganado',  fechaGestion:'22 may 2026', validado:true, comentarios:[{autor:'Ana García',iniciales:'AG',fecha:'22 may 2026',texto:'Renovación exitosa. Cliente solicitó capacitación adicional.'}] },
     { id:'922', nombre:'Muebles Diseño y Arte',       prob:'Bajo',  valor:'$960.000',  plan:'Avanzado Retail',           vertical:'Retail',       antiguedad:'9 meses',  diasUltima:20, venceDia:17, facturas:38,   comprobantes:92,   clasif:'Mediano', estado:'proceso', fechaGestion:null,      comentarios:[] },
-    { id:'165', nombre:'Colegio Nuevos Horizontes',   prob:'Alto',  valor:'$2.400.000', plan:'Profesional Servicios',    vertical:'Servicios',    antiguedad:'38 meses', diasUltima:2,  venceDia:13, facturas:260,  comprobantes:680,  clasif:'Grande',  estado:'proceso', fechaGestion:null,      comentarios:[{autor:'Luis Pérez',iniciales:'LP',fecha:'28 may 2026',texto:'Rector muy comprometido con la herramienta. Renovación casi segura.'}] },
+    { id:'165', nombre:'Colegio Nuevos Horizontes',   prob:'Alto',  valor:'$2.400.000', plan:'Profesional Servicios',    vertical:'Servicios',    antiguedad:'38 meses', diasUltima:2,  venceDia:13, facturas:260,  comprobantes:680,  clasif:'Grande',  estado:'proceso', fechaGestion:null, pipeline:'Decisión pendiente',      comentarios:[{autor:'Luis Pérez',iniciales:'LP',fecha:'28 may 2026',texto:'Rector muy comprometido con la herramienta. Renovación casi segura.'}] },
     { id:'708', nombre:'Asadero El Rincón Paisa',     prob:'Medio', valor:'$720.000',  plan:'Emprendedor Restaurante',   vertical:'Restaurante',  antiguedad:'12 meses', diasUltima:7,  venceDia:31, facturas:58,   comprobantes:138,  clasif:'Mediano', estado:'proceso', fechaGestion:null,      comentarios:[] },
-    { id:'334', nombre:'Deportes Power Gym',          prob:'Bajo',  valor:'$480.000',  plan:'Emprendedor Servicios',     vertical:'Servicios',    antiguedad:'4 meses',  diasUltima:24, venceDia:27, facturas:14,   comprobantes:31,   clasif:'Pequeño', estado:'perdido', fechaGestion:'07 may 2026', comentarios:[] },
+    { id:'334', nombre:'Deportes Power Gym',          prob:'Bajo',  valor:'$480.000',  plan:'Emprendedor Servicios',     vertical:'Servicios',    antiguedad:'4 meses',  diasUltima:24, venceDia:27, facturas:14,   comprobantes:31,   clasif:'Pequeño', estado:'perdido', fechaGestion:'07 may 2026', motivoPerdida:'Cambio de proveedor', comentarios:[] },
   ];
 
   const PAGE_SIZE = 12;
@@ -1567,6 +1649,7 @@
         <td><span style="display:inline-flex;align-items:center;gap:0">${probChip(r.prob)}${commentBtn}</span></td>
         <td class="right">${r.valor}</td>
         <td style="text-align:center">${diasHtml}</td>
+        <td>${r.pipeline ? `<span style="font-size:11px;font-weight:600;color:var(--blue);background:#EEF0FF;border-radius:20px;padding:2px 8px;white-space:nowrap">${r.pipeline}</span>` : '<span class="muted">—</span>'}</td>
         <td>${r.plan}</td>
         <td>${r.vertical}</td>
         <td class="muted right">${r.antiguedad}</td>
@@ -1588,14 +1671,25 @@
     document.getElementById('btn-next').disabled = currentPage >= totalPages;
   }
 
+  let searchQuery = '';
+
   function filterTable(q) {
-    const query = q.toLowerCase();
-    filtered = ROWS.filter(r =>
-      r.id.includes(query) ||
-      r.nombre.toLowerCase().includes(query) ||
-      r.vertical.toLowerCase().includes(query) ||
-      r.plan.toLowerCase().includes(query)
-    );
+    searchQuery = q;
+    applyFilters();
+  }
+
+  function applyFilters() {
+    const query    = searchQuery.toLowerCase();
+    const pipeline = (document.getElementById('filter-pipeline')?.value || '').toLowerCase();
+    filtered = ROWS.filter(r => {
+      const matchText = !query ||
+        r.id.includes(query) ||
+        r.nombre.toLowerCase().includes(query) ||
+        r.vertical.toLowerCase().includes(query) ||
+        r.plan.toLowerCase().includes(query);
+      const matchPipeline = !pipeline || (r.pipeline || '').toLowerCase() === pipeline;
+      return matchText && matchPipeline;
+    });
     currentPage = 1;
     renderTable();
   }
@@ -1820,7 +1914,12 @@
           <span class="card-plan" style="flex:1" title="${r.plan}">${r.plan}</span>
         </div>
         <div class="card-footer">
-          ${showFecha ? `<span class="card-fecha-gestion">${r.estado==='ganado'?'Ganado':'Perdido'}: ${r.fechaGestion}</span>` : '<span></span>'}
+          ${showFecha
+            ? `<span class="card-fecha-gestion">${r.estado==='ganado'?'Ganado':'Perdido'}: ${r.fechaGestion}</span>`
+            : r.pipeline
+              ? `<span style="font-size:10px;font-weight:600;color:var(--blue);background:#EEF0FF;border-radius:20px;padding:2px 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px">${r.pipeline}</span>`
+              : '<span></span>'
+          }
           <button class="card-comment-btn" onclick="event.stopPropagation();openComments('${r.id}')" title="Comentarios">
             ${I.comment}
             ${r.comentarios.length ? `<span style="font-size:10px;margin-left:2px;color:var(--blue)">${r.comentarios.length}</span>` : ''}
@@ -1868,7 +1967,7 @@
     document.getElementById('comment-importante').checked = !!r.importante;
     const showImportante = !hideImportante && r.estado === 'proceso';
     document.getElementById('importante-label').style.visibility = showImportante ? 'visible' : 'hidden';
-    updateEstadoInlineBtn(r.estado);
+    updateEstadoInlineBtn(r.estado, r.motivoPerdida, r.pipeline);
     updateProbInlineBtn(r.prob);
     renderCommentList(r.comentarios);
     document.getElementById('comment-drawer').classList.add('open');
@@ -1989,24 +2088,24 @@
   /* ── ESTADO MODAL ── */
   const ESTADO_HISTORY = {
     '345': [
-      { iniciales:'AG', autor:'Ana García',      fecha:'10 abr 2026', estado:'proceso', comentario:'Iniciando seguimiento. Cliente en etapa de evaluación del presupuesto.' },
-      { iniciales:'LP', autor:'Luis Pérez',      fecha:'15 may 2026', estado:'proceso', comentario:'Mantener en proceso. Propuesta enviada, esperando respuesta del director financiero.' },
+      { iniciales:'AG', autor:'Ana García',      fecha:'10 abr 2026', estado:'proceso', pipeline:'Contacto inicial',  comentario:'Iniciando seguimiento. Cliente en etapa de evaluación del presupuesto.' },
+      { iniciales:'LP', autor:'Luis Pérez',      fecha:'15 may 2026', estado:'proceso', pipeline:'En negociación',    comentario:'Mantener en proceso. Propuesta enviada, esperando respuesta del director financiero.' },
     ],
     '774': [
-      { iniciales:'MT', autor:'María Torres',    fecha:'01 mar 2026', estado:'proceso', comentario:'Cliente VIP asignado a seguimiento prioritario.' },
-      { iniciales:'LP', autor:'Luis Pérez',      fecha:'10 may 2026', estado:'proceso', comentario:'Visita presencial programada. Alta probabilidad de cierre.' },
+      { iniciales:'MT', autor:'María Torres',    fecha:'01 mar 2026', estado:'proceso', pipeline:'En seguimiento',    comentario:'Cliente VIP asignado a seguimiento prioritario.' },
+      { iniciales:'LP', autor:'Luis Pérez',      fecha:'10 may 2026', estado:'proceso', pipeline:'Propuesta enviada', comentario:'Visita presencial programada. Alta probabilidad de cierre.' },
     ],
     '133': [
-      { iniciales:'AG', autor:'Ana García',      fecha:'05 abr 2026', estado:'proceso', comentario:'Cliente activo, responde rápido. Buen candidato para renovación anticipada.' },
-      { iniciales:'CR', autor:'Carlos Ríos',     fecha:'15 may 2026', estado:'ganado',  comentario:'Renovó sin inconvenientes. Pagó de contado. Registrar como ganado.' },
+      { iniciales:'AG', autor:'Ana García',      fecha:'05 abr 2026', estado:'proceso', pipeline:'En seguimiento',    comentario:'Cliente activo, responde rápido. Buen candidato para renovación anticipada.' },
+      { iniciales:'CR', autor:'Carlos Ríos',     fecha:'15 may 2026', estado:'ganado',                               comentario:'Renovó sin inconvenientes. Pagó de contado. Registrar como ganado.' },
     ],
     '188': [
-      { iniciales:'MT', autor:'María Torres',    fecha:'12 abr 2026', estado:'proceso', comentario:'Primera llamada realizada. Cliente interesado en mantener el plan.' },
-      { iniciales:'MT', autor:'María Torres',    fecha:'18 may 2026', estado:'ganado',  comentario:'Renovó y amplió usuarios. Solicitar caso de éxito para marketing.' },
+      { iniciales:'MT', autor:'María Torres',    fecha:'12 abr 2026', estado:'proceso', pipeline:'Contacto inicial',  comentario:'Primera llamada realizada. Cliente interesado en mantener el plan.' },
+      { iniciales:'MT', autor:'María Torres',    fecha:'18 may 2026', estado:'ganado',                               comentario:'Renovó y amplió usuarios. Solicitar caso de éxito para marketing.' },
     ],
     '201': [
-      { iniciales:'AG', autor:'Ana García',      fecha:'20 abr 2026', estado:'proceso', comentario:'Cliente con señales de baja, contactar urgente.' },
-      { iniciales:'AG', autor:'Ana García',      fecha:'08 may 2026', estado:'perdido', comentario:'Cliente decidió no renovar por problemas de caja. Registrar como perdido.' },
+      { iniciales:'AG', autor:'Ana García',      fecha:'20 abr 2026', estado:'proceso', pipeline:'En seguimiento',    comentario:'Cliente con señales de baja, contactar urgente.' },
+      { iniciales:'AG', autor:'Ana García',      fecha:'08 may 2026', estado:'perdido', motivo:'Cerré el negocio',    comentario:'Cliente decidió no renovar por problemas de caja. Registrar como perdido.' },
     ],
   };
   let selectedEstadoOpt = 'proceso';
@@ -2014,11 +2113,28 @@
   const ESTADO_LABELS = { proceso:'En proceso', ganado:'Ganado', perdido:'Perdido' };
   const ESTADO_COLORS = { proceso: 'var(--blue)', ganado: '#00875A', perdido: 'var(--red)' };
 
-  function updateEstadoInlineBtn(estado) {
+  function updateEstadoInlineBtn(estado, motivo, pipeline) {
     const btn = document.getElementById('estado-inline-btn');
     if (!btn) return;
     btn.textContent = ESTADO_LABELS[estado] || estado;
     btn.style.color = ESTADO_COLORS[estado] || 'var(--text)';
+    const estadoRow = btn.closest('div[style*="border-top"]');
+
+    // Motivo de pérdida — segunda línea
+    let motivoEl = document.getElementById('motivo-inline');
+    if (estado === 'perdido' && motivo) {
+      if (!motivoEl) { motivoEl = document.createElement('div'); motivoEl.id = 'motivo-inline'; if (estadoRow) estadoRow.appendChild(motivoEl); }
+      motivoEl.style.cssText = 'font-size:11px;font-weight:600;color:var(--white);background:var(--red);border-radius:6px;padding:3px 10px;display:inline-block;width:fit-content;margin-top:6px';
+      motivoEl.textContent = motivo;
+    } else if (motivoEl) { motivoEl.remove(); }
+
+    // Pipeline — segunda línea
+    let pipelineEl = document.getElementById('pipeline-inline');
+    if (estado === 'proceso' && pipeline) {
+      if (!pipelineEl) { pipelineEl = document.createElement('div'); pipelineEl.id = 'pipeline-inline'; if (estadoRow) estadoRow.appendChild(pipelineEl); }
+      pipelineEl.style.cssText = 'font-size:11px;font-weight:600;color:var(--blue);background:#EEF0FF;border-radius:6px;padding:3px 10px;display:inline-block;width:fit-content;margin-top:6px';
+      pipelineEl.textContent = pipeline;
+    } else if (pipelineEl) { pipelineEl.remove(); }
   }
 
   function openEstadoModal() {
@@ -2028,6 +2144,10 @@
     document.querySelectorAll('.estado-opt-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('opt-' + r.estado).classList.add('active');
     document.getElementById('estado-comment-input').value = '';
+    document.getElementById('motivo-select').value = r.motivoPerdida || '';
+    document.getElementById('motivo-row').style.display = r.estado === 'perdido' ? 'flex' : 'none';
+    document.getElementById('pipeline-select').value = r.pipeline || '';
+    document.getElementById('pipeline-row').style.display = r.estado === 'proceso' ? 'flex' : 'none';
     document.getElementById('estado-modal').classList.add('open');
   }
 
@@ -2040,6 +2160,10 @@
     selectedEstadoOpt = val;
     document.querySelectorAll('.estado-opt-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+    document.getElementById('motivo-row').style.display = val === 'perdido' ? 'flex' : 'none';
+    if (val !== 'perdido') document.getElementById('motivo-select').value = '';
+    document.getElementById('pipeline-row').style.display = val === 'proceso' ? 'flex' : 'none';
+    if (val !== 'proceso') document.getElementById('pipeline-select').value = '';
   }
 
   function confirmEstado() {
@@ -2051,11 +2175,15 @@
       return;
     }
     document.getElementById('estado-comment-input').style.borderColor = 'var(--gray-line)';
+    const motivo   = selectedEstadoOpt === 'perdido' ? document.getElementById('motivo-select').value : null;
+    const pipeline = selectedEstadoOpt === 'proceso'  ? document.getElementById('pipeline-select').value : null;
     if (!ESTADO_HISTORY[r.id]) ESTADO_HISTORY[r.id] = [];
-    ESTADO_HISTORY[r.id].push({ iniciales:'RG', autor:'Ramiro Guerrero', fecha:'15 jun 2026', estado: selectedEstadoOpt, comentario });
+    ESTADO_HISTORY[r.id].push({ iniciales:'RG', autor:'Ramiro Guerrero', fecha:'15 jun 2026', estado: selectedEstadoOpt, comentario, motivo, pipeline });
     r.estado = selectedEstadoOpt;
+    r.motivoPerdida = selectedEstadoOpt === 'perdido' ? motivo : null;
+    if (selectedEstadoOpt === 'proceso') r.pipeline = pipeline;
     if (selectedEstadoOpt !== 'proceso') r.fechaGestion = '15 jun 2026';
-    updateEstadoInlineBtn(selectedEstadoOpt);
+    updateEstadoInlineBtn(selectedEstadoOpt, motivo, pipeline);
     document.getElementById('estado-modal').classList.remove('open');
     renderCards();
     renderTable();
@@ -2078,6 +2206,8 @@
               <span class="prob-history-name">${h.autor}</span>
               <span class="prob-history-date">${h.fecha}</span>
               <span class="estado-tag ${h.estado}">${LABELS[h.estado]}</span>
+              ${h.motivo    ? `<span style="font-size:10px;font-weight:600;background:var(--red-light);color:var(--red);border-radius:20px;padding:2px 8px">${h.motivo}</span>` : ''}
+              ${h.pipeline  ? `<span style="font-size:10px;font-weight:600;background:#EEF0FF;color:var(--blue);border-radius:20px;padding:2px 8px">${h.pipeline}</span>` : ''}
             </div>
             <div class="estado-history-comment">${h.comentario}</div>
           </div>
@@ -2120,6 +2250,37 @@
   function closeProbHistory(e) {
     if (e && e.target !== document.getElementById('prob-history-modal')) return;
     document.getElementById('prob-history-modal').classList.remove('open');
+  }
+
+  /* ── DOWNLOAD MODAL ── */
+  function openDownloadModal() {
+    document.getElementById('download-desde').value = '';
+    document.getElementById('download-hasta').value = '';
+    document.getElementById('download-error').style.display = 'none';
+    document.getElementById('download-modal').classList.add('open');
+  }
+
+  function closeDownloadModal(e) {
+    if (e && e.target !== document.getElementById('download-modal')) return;
+    document.getElementById('download-modal').classList.remove('open');
+  }
+
+  function confirmDownload() {
+    const desde = document.getElementById('download-desde').value;
+    const hasta = document.getElementById('download-hasta').value;
+    const err   = document.getElementById('download-error');
+    if (!desde || !hasta) { err.style.display = 'block'; return; }
+    err.style.display = 'none';
+    // Simulación de descarga
+    const btn = document.querySelector('#download-modal .btn-primary');
+    const original = btn.innerHTML;
+    btn.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style="width:13px;height:13px;animation:spin 0.8s linear infinite"><path d="M8 2a6 6 0 1 1-4.24 1.76"/></svg> Descargando…';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.innerHTML = original;
+      btn.disabled = false;
+      document.getElementById('download-modal').classList.remove('open');
+    }, 1800);
   }
 
   /* ── INIT ── */
