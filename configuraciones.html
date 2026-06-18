@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bold · Backoffice — Configuraciones</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+</head>
+<body>
+
+<aside>
+  <div class="logo">bold</div>
+  <div class="user-block">
+    <div class="name">Ramiro Guerrero</div>
+    <div class="role">Head of Customer Experience</div>
+  </div>
+  <nav>
+    <div class="nav-section">
+      <div class="nav-section-label">Suscripciones SaaS</div>
+      <a class="nav-item" href="index.html">
+        <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M2 12c0-2.2 1.8-4 4-4h4c2.2 0 4 1.8 4 4"/><circle cx="8" cy="5" r="2.5"/><path d="M13 8.5c1.1.5 2 1.5 2 3"/><path d="M3 8.5C1.9 9 1 10 1 11.5"/></svg></span>
+        Comercios en Onboarding <span class="badge">179</span>
+      </a>
+      <a class="nav-item" href="index.html">
+        <span class="nav-icon"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="M5 8.5l2 2 4-4"/></svg></span>
+        Comercios activos <span class="badge">9.654</span>
+      </a>
+      <a class="nav-item" href="index.html">
+        <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M13.5 8A5.5 5.5 0 1 1 8 2.5"/><path d="M11 2l2 2-4 4"/><path d="M13 2l2 2"/></svg></span>
+        Renovaciones
+      </a>
+      <a class="nav-item" href="index.html">
+        <span class="nav-icon"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="M5.5 5.5l5 5M10.5 5.5l-5 5"/></svg></span>
+        Comercios inactivos
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Admin SaaS</div>
+      <a class="nav-item" href="index.html">
+        <span class="nav-icon"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="1.5"/><path d="M5 6h6M5 9h4"/></svg></span>
+        Planes por vertical
+      </a>
+      <a class="nav-item active" href="configuraciones.html">
+        <span class="nav-icon"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="2"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.1 3.1l1.4 1.4M11.5 11.5l1.4 1.4M3.1 12.9l1.4-1.4M11.5 4.5l1.4-1.4"/></svg></span>
+        Configuraciones
+      </a>
+    </div>
+  </nav>
+  <div class="nav-logout">
+    <a><svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;flex-shrink:0" viewBox="0 0 16 16"><path d="M6 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3M10.5 11l3-3-3-3M13.5 8H6"/></svg> Cerrar sesión</a>
+  </div>
+</aside>
+
+<main>
+  <header>
+    <span class="topbar-icon">🔔</span>
+    <div class="avatar">RG</div>
+  </header>
+
+  <div class="config-page" id="page-config" style="display:flex">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px">
+      <h1 style="font-size:22px;font-weight:700;color:var(--navy);margin:0">Configuraciones</h1>
+    </div>
+    <div class="tabs" style="margin-bottom:0">
+      <div class="tab" onclick="switchConfigTab('atributos',this)">Atributos</div>
+      <div class="tab" onclick="switchConfigTab('agentes',this)">Agentes CS</div>
+      <div class="tab" onclick="switchConfigTab('ejecutivos',this)">Ejecutivos comerciales</div>
+      <div class="tab active" onclick="switchConfigTab('rangos',this)">Rangos de Facturación</div>
+    </div>
+    <div style="height:1px;background:var(--gray-line);margin-bottom:24px"></div>
+    <div id="ctab-atributos" style="display:none"><div class="tab-empty"><div class="icon">⚙️</div><p>Atributos — próximamente.</p></div></div>
+    <div id="ctab-agentes" style="display:none"><div class="tab-empty"><div class="icon">👤</div><p>Agentes CS — próximamente.</p></div></div>
+    <div id="ctab-ejecutivos" style="display:none"><div class="tab-empty"><div class="icon">💼</div><p>Ejecutivos comerciales — próximamente.</p></div></div>
+    <div id="ctab-rangos">
+      <div style="max-width:620px">
+        <div style="border:1px solid var(--gray-line);border-radius:8px;overflow-x:auto">
+          <table style="width:100%;min-width:520px">
+            <thead><tr><th style="width:48px;text-align:center">#</th><th>Nombre</th><th style="text-align:right">Desde</th><th style="text-align:right;width:200px">Hasta</th></tr></thead>
+            <tbody id="rangos-tbody"></tbody>
+          </table>
+        </div>
+        <div style="margin-top:12px;display:flex;justify-content:flex-end">
+          <button class="btn btn-outline" style="font-size:12px;padding:7px 14px;display:flex;align-items:center;gap:6px" onclick="addRango()">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:13px;height:13px"><path d="M8 3v10M3 8h10"/></svg> Agregar rango
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="shared.js"></script>
+<script>
+  function switchConfigTab(tab, el) {
+    document.querySelectorAll('#page-config .tabs .tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    ['atributos','agentes','ejecutivos','rangos'].forEach(id => {
+      document.getElementById('ctab-' + id).style.display = id === tab ? '' : 'none';
+    });
+  }
+
+  const RANGOS = [
+    { nombre:'🔴 $0',         hasta: 0 },
+    { nombre:'🟡 $1-3M',      hasta: 3000000 },
+    { nombre:'💰 $3-10M',     hasta: 10000000 },
+    { nombre:'🚀 $10-25M',    hasta: 25000000 },
+    { nombre:'🚀 $25-70M',    hasta: 70000000 },
+    { nombre:'🐘 $70M o más', hasta: Infinity },
+  ];
+  function formatNum(n) { if (n === Infinity || n === null) return '∞'; return n.toLocaleString('es-CO'); }
+  function renderRangos() {
+    const tbody = document.getElementById('rangos-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = RANGOS.map((r, i) => {
+      const desde = i === 0 ? 0 : (RANGOS[i-1].hasta === Infinity ? '∞' : RANGOS[i-1].hasta + 1);
+      const isLast = i === RANGOS.length - 1;
+      return `<tr>
+        <td style="text-align:center;color:var(--gray-text)">${i}</td>
+        <td><input value="${r.nombre}" onchange="RANGOS[${i}].nombre=this.value;renderRangos()" style="border:1px solid transparent;border-radius:6px;padding:4px 8px;font-family:inherit;font-size:13px;width:100%;outline:none;background:none" onfocus="this.style.borderColor='var(--blue)';this.style.background='#fff'" onblur="this.style.borderColor='transparent';this.style.background='none'" /></td>
+        <td style="text-align:right;color:var(--gray-text);padding-right:16px">${formatNum(desde)}</td>
+        <td style="text-align:right">${isLast ? `<span style="color:var(--gray-text);padding-right:16px;font-size:15px">∞</span>` : `<input type="text" value="${formatNum(r.hasta)}" onchange="updateHasta(${i}, this.value)" style="border:1px solid transparent;border-radius:6px;padding:4px 8px;font-family:inherit;font-size:13px;width:130px;text-align:right;outline:none;background:none" onfocus="this.style.borderColor='var(--blue)';this.style.background='#fff'" onblur="this.style.borderColor='transparent';this.style.background='none'" />`}
+        ${RANGOS.length > 2 ? `<button onclick="removeRango(${i})" style="border:none;background:none;cursor:pointer;color:var(--gray-text);padding:4px;border-radius:4px;vertical-align:middle;margin-left:4px" title="Eliminar"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M3 4h10M6 4V3h4v1M5 4l.5 9h5L11 4"/></svg></button>` : ''}
+        </td></tr>`;
+    }).join('');
+  }
+  function updateHasta(i, val) { const n = parseInt(val.replace(/\./g,'').replace(/,/g,''), 10); if (!isNaN(n)) { RANGOS[i].hasta = n; renderRangos(); } }
+  function addRango() { const last = RANGOS.slice(0,-1).at(-1)?.hasta ?? 0; RANGOS.splice(RANGOS.length - 1, 0, { nombre:'✏️ Nuevo rango', hasta: last + 1000000 }); renderRangos(); }
+  function removeRango(i) { if (RANGOS.length <= 2) return; RANGOS.splice(i, 1); renderRangos(); }
+
+  renderRangos();
+</script>
+</body>
+</html>

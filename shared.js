@@ -10,7 +10,7 @@ const ROWS = [
   { id:'856', nombre:'Heladería Polar Express',     prob:'Bajo',  valor:'$480.000',  plan:'Emprendedor Restaurante',   vertical:'Restaurante',  antiguedad:'3 meses',  diasUltima:31, venceDia:27, facturas:8,    comprobantes:18,   clasif:'Pequeño', estado:'perdido', fechaGestion:'03 may 2026', motivoPerdida:'Ilocalizable', importante:false, comentarios:[] },
   { id:'477', nombre:'Moda & Estilo Boutique',      prob:'Medio', valor:'$960.000',  plan:'Avanzado Retail',           vertical:'Retail',       antiguedad:'17 meses', diasUltima:5,  venceDia:20, facturas:75,   comprobantes:190,  clasif:'Mediano', estado:'proceso', pipeline:'Propuesta enviada', fechaGestion:null,       importante:false, comentarios:[{autor:'Ana García',iniciales:'AG',fecha:'22 may 2026',texto:'Interesada en upgrade al plan Premium. Enviar cotización.'},{autor:'Ana García',iniciales:'AG',fecha:'08 jun 2026',texto:'Contactar a Maria Paula para confirmar la decisión sobre el upgrade.',alerta:{fechaAlerta:'2026-06-10',hora:'11:00 am',estado:'pendiente'}}] },
   { id:'622', nombre:'Constructor Obras Civiles',   prob:'Alto',  valor:'$2.400.000', plan:'Profesional Servicios',    vertical:'Servicios',    antiguedad:'40 meses', diasUltima:1,  venceDia:8,  facturas:290,  comprobantes:740,  clasif:'Grande',  estado:'proceso', pipeline:'En cierre',         fechaGestion:null,       importante:false, comentarios:[{autor:'Luis Pérez',iniciales:'LP',fecha:'20 may 2026',texto:'Primer contacto exitoso. Gerente de proyectos interesado en renovar antes de vencimiento.'},{autor:'Luis Pérez',iniciales:'LP',fecha:'01 jun 2026',texto:'Envié propuesta de renovación anticipada con beneficios de continuidad.',alerta:{fechaAlerta:'2026-06-05',hora:'10:00 am',estado:'realizado',comentarioResolucion:'Confirmaron intención de renovar. Esperando aprobación del área financiera.'}},{autor:'Ramiro Guerrero',iniciales:'RG',fecha:'08 jun 2026',texto:'Seguimiento a la aprobación del área financiera. Muy cerca del cierre.',alerta:{fechaAlerta:'2026-06-13',hora:'9:00 am',estado:'pendiente'}}] },
-  { id:'309', nombre:'Arepas & Más S.A.S.',         prob:'Bajo',  valor:'$480.000',  plan:'Emprendedor Restaurante',   vertical:'Restaurante',  antiguedad:'6 meses',  diasUltima:19, venceDia:25, facturas:20,   comprobantes:44,   clasif:'Pequeño', estado:'perdido', fechaGestion:'10 may 2026', motivoPerdida:'Precio alto', importante:false, comentarios:[{autor:'Luis Pérez',iniciales:'LP',fecha:'10 may 2026',texto:'No pudo costear la renovación este ciclo. Seguimiento en 3 meses.'}] },
+  { id:'309', nombre:'Arepas & Más S.A.S.',         prob:'Bajo',  valor:'$480.000',  plan:'Emprendedor Restaurante',   vertical:'Restaurante',  antiguedad:'6 meses',  diasUltima:19, venceDia:25, facturas:20,   comprobantes:44,   clasif:'Pequeño', estado:'perdido', fechaGestion:'10 may 2026', motivoPerdida:'Precio alto', validado:true, importante:false, comentarios:[{autor:'Luis Pérez',iniciales:'LP',fecha:'10 may 2026',texto:'No pudo costear la renovación este ciclo. Seguimiento en 3 meses.'}] },
   { id:'741', nombre:'Súper Ofertas del Norte',     prob:'Medio', valor:'$1.200.000', plan:'Avanzado Retail',          vertical:'Retail',       antiguedad:'21 meses', diasUltima:6,  venceDia:14, facturas:140,  comprobantes:360,  clasif:'Mediano', estado:'proceso', pipeline:'En negociación',    fechaGestion:null,       importante:false, comentarios:[{autor:'Ana García',iniciales:'AG',fecha:'15 may 2026',texto:'Comercio con buena actividad pero titular difícil de contactar.'},{autor:'Ana García',iniciales:'AG',fecha:'29 may 2026',texto:'Logré contacto por referido interno. Acordar videollamada.',alerta:{fechaAlerta:'2026-06-04',hora:'3:00 pm',estado:'cancelado',comentarioResolucion:'No se conectó a la videollamada. Reagendar.'}}  ,{autor:'Carlos Ríos',iniciales:'CR',fecha:'06 jun 2026',texto:'Nuevo intento de contacto. Dejé mensaje de voz detallado con condiciones.',alerta:{fechaAlerta:'2026-06-10',hora:'4:00 pm',estado:'pendiente'}}] },
   { id:'188', nombre:'Consultora Legal Andina',     prob:'Alto',  valor:'$1.800.000', plan:'Profesional Servicios',    vertical:'Servicios',    antiguedad:'31 meses', diasUltima:2,  venceDia:10, facturas:200,  comprobantes:510,  clasif:'Grande',  estado:'ganado',  fechaGestion:'18 may 2026', importante:false, comentarios:[{autor:'María Torres',iniciales:'MT',fecha:'18 may 2026',texto:'Renovó y amplió usuarios del plan. Excelente cliente.'}] },
   { id:'523', nombre:'Librería El Saber',           prob:'Medio', valor:'$720.000',  plan:'Emprendedor Retail',        vertical:'Retail',       antiguedad:'11 meses', diasUltima:10, venceDia:28, facturas:45,   comprobantes:108,  clasif:'Pequeño', estado:'proceso', fechaGestion:null,       importante:false, comentarios:[{autor:'Carlos Ríos',iniciales:'CR',fecha:'25 may 2026',texto:'Dueño muy ocupado, atiende solo. Mejor contactar a primera hora de la mañana.'},{autor:'Carlos Ríos',iniciales:'CR',fecha:'05 jun 2026',texto:'Llamada exitosa. Explicó que quiere renovar pero necesita autorización del contador.',alerta:{fechaAlerta:'2026-06-11',hora:'8:30 am',estado:'pendiente'}}] },
@@ -34,26 +34,74 @@ const ROWS = [
   { id:'334', nombre:'Deportes Power Gym',          prob:'Bajo',  valor:'$480.000',  plan:'Emprendedor Servicios',     vertical:'Servicios',    antiguedad:'4 meses',  diasUltima:24, venceDia:27, facturas:14,   comprobantes:31,   clasif:'Pequeño', estado:'perdido', fechaGestion:'07 may 2026', motivoPerdida:'Cambio de proveedor', importante:false, comentarios:[] },
 ];
 
+const EJECUTIVOS = ['Ana García', 'Luis Pérez', 'María Torres', 'Carlos Ríos', 'Ramiro Guerrero'];
+ROWS.forEach(r => { r.ejecutivo = r.comentarios.length ? r.comentarios[0].autor : null; });
+{
+  const ejecutivoOverrides = { '345':'Ramiro Guerrero', '774':'María Torres', '622':'Ramiro Guerrero', '271':'Ramiro Guerrero' };
+  Object.keys(ejecutivoOverrides).forEach(id => {
+    const r = ROWS.find(x => x.id === id);
+    if (r) r.ejecutivo = ejecutivoOverrides[id];
+  });
+}
+{
+  const validadosProceso = ['622', '165', '271'];
+  validadosProceso.forEach(id => {
+    const r = ROWS.find(x => x.id === id);
+    if (r) r.validado = true;
+  });
+}
+
 const PROB_HISTORY = {
   '345': [{iniciales:'CR',autor:'Carlos Ríos',      fecha:'10 abr 2026', prob:'Bajo',  comentario:'Primera evaluación. Cliente recién llegado, sin historial suficiente.' },
           {iniciales:'AG',autor:'Ana García',       fecha:'02 may 2026', prob:'Medio', comentario:'Respondió bien a la llamada. Hay interés pero aún no hay certeza de presupuesto.' },
           {iniciales:'LP',autor:'Luis Pérez',       fecha:'27 may 2026', prob:'Alto',  comentario:'Confirmó que tiene el presupuesto aprobado. Alta probabilidad de cierre.' }],
   '774': [{iniciales:'MT',autor:'María Torres',     fecha:'15 mar 2026', prob:'Medio', comentario:'Cliente grande pero con proceso de aprobación interno largo.' },
-          {iniciales:'LP',autor:'Luis Pérez',       fecha:'28 may 2026', prob:'Alto',  comentario:'Visita presencial realizada. Director comprometido con la renovación.' }],
+          {iniciales:'LP',autor:'Luis Pérez',       fecha:'28 may 2026', prob:'Alto',  comentario:'Visita presencial realizada. Director comprometido con la renovación.' },
+          {iniciales:'MT',autor:'María Torres',     fecha:'05 jun 2026', prob:'Alto',  comentario:'Confirmó agenda previa para la reunión presencial. Se mantiene en alto.' }],
   '133': [{iniciales:'AG',autor:'Ana García',       fecha:'20 abr 2026', prob:'Medio', comentario:'Usa la plataforma regularmente pero no ha confirmado intención de renovar.' },
           {iniciales:'CR',autor:'Carlos Ríos',      fecha:'15 may 2026', prob:'Alto',  comentario:'Renovó sin inconvenientes. Confirmado como ganado.' }],
   '965': [{iniciales:'RG',autor:'Ramiro Guerrero',  fecha:'01 may 2026', prob:'Medio', comentario:'Cliente estratégico, en espera de reunión con director financiero.' },
-          {iniciales:'CR',autor:'Carlos Ríos',      fecha:'26 may 2026', prob:'Alto',  comentario:'Reunión confirmada para la semana siguiente. Muy positivo.' }],
+          {iniciales:'CR',autor:'Carlos Ríos',      fecha:'26 may 2026', prob:'Alto',  comentario:'Reunión confirmada para la semana siguiente. Muy positivo.' },
+          {iniciales:'CR',autor:'Carlos Ríos',      fecha:'09 jun 2026', prob:'Alto',  comentario:'Reunión exitosa con director financiero. Propuesta formal en camino.' }],
+  '512': [{iniciales:'CR',autor:'Carlos Ríos',      fecha:'15 abr 2026', prob:'Alto',  comentario:'Cliente activo con buen historial de pagos.' },
+          {iniciales:'CR',autor:'Carlos Ríos',      fecha:'20 may 2026', prob:'Medio', comentario:'No ha respondido los últimos correos. Bajando probabilidad mientras se retoma contacto.' }],
+  '477': [{iniciales:'AG',autor:'Ana García',       fecha:'05 may 2026', prob:'Bajo',  comentario:'Sin actividad reciente. Evaluación inicial conservadora.' },
+          {iniciales:'AG',autor:'Ana García',       fecha:'22 may 2026', prob:'Medio', comentario:'Interesada en upgrade al plan Premium. Sube la probabilidad.' }],
+  '622': [{iniciales:'LP',autor:'Luis Pérez',       fecha:'08 may 2026', prob:'Medio', comentario:'Gerente de proyectos receptivo pero sin compromiso firme aún.' },
+          {iniciales:'LP',autor:'Luis Pérez',       fecha:'20 may 2026', prob:'Alto',  comentario:'Primer contacto exitoso. Interés claro en renovar antes de vencimiento.' },
+          {iniciales:'RG',autor:'Ramiro Guerrero',  fecha:'08 jun 2026', prob:'Alto',  comentario:'Cerca de la aprobación financiera. Se mantiene en alto.' }],
+  '659': [{iniciales:'CR',autor:'Carlos Ríos',      fecha:'10 may 2026', prob:'Medio', comentario:'Contrato multianual en evaluación por parte del cliente.' },
+          {iniciales:'CR',autor:'Carlos Ríos',      fecha:'27 may 2026', prob:'Alto',  comentario:'Negociación avanzando bien con equipo jurídico.' }],
+  '741': [{iniciales:'AG',autor:'Ana García',       fecha:'02 may 2026', prob:'Bajo',  comentario:'Titular difícil de contactar. Probabilidad baja por ahora.' },
+          {iniciales:'AG',autor:'Ana García',       fecha:'15 may 2026', prob:'Medio', comentario:'Buena actividad en el comercio, sube la probabilidad pese a dificultad de contacto.' }],
+  '390': [{iniciales:'MT',autor:'María Torres',     fecha:'01 may 2026', prob:'Bajo',  comentario:'Cliente evaluando alternativas de la competencia.' },
+          {iniciales:'MT',autor:'María Torres',     fecha:'18 may 2026', prob:'Medio', comentario:'Respondió correo y solicitó comparativo de precios. Mejora la probabilidad.' }],
+  '544': [{iniciales:'MT',autor:'María Torres',     fecha:'10 may 2026', prob:'Medio', comentario:'Cliente activo, en evaluación de renovación.' },
+          {iniciales:'MT',autor:'María Torres',     fecha:'23 may 2026', prob:'Alto',  comentario:'Muy activo en uso de la plataforma. Alta probabilidad de renovación.' }],
+  '618': [{iniciales:'AG',autor:'Ana García',       fecha:'05 may 2026', prob:'Bajo',  comentario:'Solicitó descuento, sin definición clara aún.' },
+          {iniciales:'AG',autor:'Ana García',       fecha:'21 may 2026', prob:'Medio', comentario:'Escalado a gerencia para aprobar descuento. Sube la probabilidad.' }],
+  '165': [{iniciales:'LP',autor:'Luis Pérez',       fecha:'02 may 2026', prob:'Medio', comentario:'Rector receptivo, en evaluación del presupuesto institucional.' },
+          {iniciales:'LP',autor:'Luis Pérez',       fecha:'28 may 2026', prob:'Alto',  comentario:'Rector muy comprometido con la herramienta. Renovación casi segura.' }],
+  '271': [{iniciales:'LP',autor:'Luis Pérez',       fecha:'01 may 2026', prob:'Medio', comentario:'Cliente fiel, evaluando si renovar igual o hacer upgrade.' },
+          {iniciales:'LP',autor:'Luis Pérez',       fecha:'22 may 2026', prob:'Alto',  comentario:'Alta disposición a renovar. Solicita upgrade a Premium.' }],
+  '192': [{iniciales:'AG',autor:'Ana García',       fecha:'15 may 2026', prob:'Bajo',  comentario:'Propietaria evaluando cambiar de plan o no renovar.' },
+          {iniciales:'AG',autor:'Ana García',       fecha:'02 jun 2026', prob:'Medio', comentario:'Conversación amable, sigue evaluando entre renovar o cambiar de plan.' }],
+  '708': [{iniciales:'CR',autor:'Carlos Ríos',      fecha:'20 may 2026', prob:'Bajo',  comentario:'Primer acercamiento, sin información suficiente aún.' },
+          {iniciales:'CR',autor:'Carlos Ríos',      fecha:'04 jun 2026', prob:'Medio', comentario:'Primer contacto realizado, buena disposición del dueño.' }],
+  '453': [{iniciales:'LP',autor:'Luis Pérez',       fecha:'25 may 2026', prob:'Medio', comentario:'Cliente con actividad moderada.' },
+          {iniciales:'LP',autor:'Luis Pérez',       fecha:'06 jun 2026', prob:'Bajo',  comentario:'Poca actividad y posible no renovación por parte de su prima con punto similar.' }],
 };
 
 const ESTADO_HISTORY = {
   '345': [
     { iniciales:'AG', autor:'Ana García',   fecha:'10 abr 2026', estado:'proceso', pipeline:'Contacto inicial',  comentario:'Iniciando seguimiento. Cliente en etapa de evaluación del presupuesto.' },
     { iniciales:'LP', autor:'Luis Pérez',   fecha:'15 may 2026', estado:'proceso', pipeline:'En negociación',    comentario:'Mantener en proceso. Propuesta enviada, esperando respuesta del director financiero.' },
+    { iniciales:'RG', autor:'Ramiro Guerrero', fecha:'07 jun 2026', estado:'proceso', pipeline:'En negociación', comentario:'Cliente aceptó la propuesta con descuento. Esperando firma del contrato.' },
   ],
   '774': [
     { iniciales:'MT', autor:'María Torres', fecha:'01 mar 2026', estado:'proceso', pipeline:'En seguimiento',    comentario:'Cliente VIP asignado a seguimiento prioritario.' },
     { iniciales:'LP', autor:'Luis Pérez',   fecha:'10 may 2026', estado:'proceso', pipeline:'Propuesta enviada', comentario:'Visita presencial programada. Alta probabilidad de cierre.' },
+    { iniciales:'MT', autor:'María Torres', fecha:'28 may 2026', estado:'proceso', pipeline:'Propuesta enviada', comentario:'Visita confirmada para el 2 de junio. Se mantiene en propuesta enviada.' },
   ],
   '133': [
     { iniciales:'AG', autor:'Ana García',   fecha:'05 abr 2026', estado:'proceso', pipeline:'En seguimiento',    comentario:'Cliente activo, responde rápido. Buen candidato para renovación anticipada.' },
@@ -66,6 +114,79 @@ const ESTADO_HISTORY = {
   '201': [
     { iniciales:'AG', autor:'Ana García',   fecha:'20 abr 2026', estado:'proceso', pipeline:'En seguimiento',    comentario:'Cliente con señales de baja, contactar urgente.' },
     { iniciales:'AG', autor:'Ana García',   fecha:'08 may 2026', estado:'perdido', motivo:'Cerré el negocio',    comentario:'Cliente decidió no renovar por problemas de caja. Registrar como perdido.' },
+  ],
+  '512': [
+    { iniciales:'CR', autor:'Carlos Ríos',  fecha:'18 abr 2026', estado:'proceso', pipeline:'Contacto inicial',  comentario:'Primer contacto realizado, comercio con buen historial de uso.' },
+    { iniciales:'CR', autor:'Carlos Ríos',  fecha:'20 may 2026', estado:'proceso', pipeline:'Contacto inicial',  comentario:'No ha respondido los últimos 2 correos. Intentar por WhatsApp.' },
+  ],
+  '477': [
+    { iniciales:'AG', autor:'Ana García',   fecha:'02 may 2026', estado:'proceso', pipeline:'Contacto inicial',  comentario:'Primer acercamiento al comercio.' },
+    { iniciales:'AG', autor:'Ana García',   fecha:'22 may 2026', estado:'proceso', pipeline:'Propuesta enviada', comentario:'Interesada en upgrade al plan Premium. Enviar cotización.' },
+  ],
+  '622': [
+    { iniciales:'LP', autor:'Luis Pérez',   fecha:'05 may 2026', estado:'proceso', pipeline:'Contacto inicial',  comentario:'Comercio identificado como candidato a renovación anticipada.' },
+    { iniciales:'LP', autor:'Luis Pérez',   fecha:'20 may 2026', estado:'proceso', pipeline:'En cierre',         comentario:'Primer contacto exitoso. Gerente de proyectos interesado en renovar antes de vencimiento.' },
+    { iniciales:'RG', autor:'Ramiro Guerrero', fecha:'08 jun 2026', estado:'proceso', pipeline:'En cierre',      comentario:'Seguimiento a la aprobación del área financiera. Muy cerca del cierre.' },
+  ],
+  '659': [
+    { iniciales:'CR', autor:'Carlos Ríos',  fecha:'10 may 2026', estado:'proceso', pipeline:'En seguimiento',    comentario:'Contrato multianual identificado como oportunidad clave.' },
+    { iniciales:'CR', autor:'Carlos Ríos',  fecha:'27 may 2026', estado:'proceso', pipeline:'En negociación',    comentario:'Contrato multianual en negociación. Coordinar con equipo jurídico.' },
+  ],
+  '741': [
+    { iniciales:'AG', autor:'Ana García',   fecha:'15 may 2026', estado:'proceso', pipeline:'Contacto inicial',  comentario:'Comercio con buena actividad pero titular difícil de contactar.' },
+    { iniciales:'AG', autor:'Ana García',   fecha:'29 may 2026', estado:'proceso', pipeline:'En negociación',    comentario:'Logré contacto por referido interno. Acordar videollamada.' },
+  ],
+  '390': [
+    { iniciales:'MT', autor:'María Torres', fecha:'18 may 2026', estado:'proceso', pipeline:'Contacto inicial',  comentario:'Cliente respondió correo. Quiere comparar precio con competencia antes de decidir.' },
+    { iniciales:'MT', autor:'María Torres', fecha:'02 jun 2026', estado:'proceso', pipeline:'En seguimiento',    comentario:'Envié comparativo de precios y tabla de beneficios exclusivos Bold.' },
+  ],
+  '544': [
+    { iniciales:'MT', autor:'María Torres', fecha:'23 may 2026', estado:'proceso', pipeline:'En seguimiento',    comentario:'Muy activo en uso de la plataforma. Alta probabilidad de renovación.' },
+    { iniciales:'MT', autor:'María Torres', fecha:'31 may 2026', estado:'proceso', pipeline:'Propuesta enviada', comentario:'Envié propuesta formal. Dueña fuera de ciudad hasta el 7 de junio.' },
+  ],
+  '618': [
+    { iniciales:'AG', autor:'Ana García',   fecha:'21 may 2026', estado:'proceso', pipeline:'Contacto inicial',  comentario:'Solicita descuento por pronto pago. Escalar a gerencia.' },
+    { iniciales:'AG', autor:'Ana García',   fecha:'28 may 2026', estado:'proceso', pipeline:'En negociación',    comentario:'Gerencia aprobó descuento del 8% por pago anticipado. Informar al cliente.' },
+  ],
+  '165': [
+    { iniciales:'LP', autor:'Luis Pérez',   fecha:'28 may 2026', estado:'proceso', pipeline:'En seguimiento',    comentario:'Rector muy comprometido con la herramienta. Renovación casi segura.' },
+    { iniciales:'LP', autor:'Luis Pérez',   fecha:'03 jun 2026', estado:'proceso', pipeline:'Decisión pendiente', comentario:'Junta directiva revisará propuesta en sesión del 9 de junio. Esperar resultado.' },
+  ],
+  '271': [
+    { iniciales:'LP', autor:'Luis Pérez',   fecha:'22 may 2026', estado:'proceso', pipeline:'En seguimiento',    comentario:'Cliente fiel de 4 años. Alta disposición a renovar.' },
+    { iniciales:'LP', autor:'Luis Pérez',   fecha:'30 may 2026', estado:'proceso', pipeline:'Propuesta enviada', comentario:'Presenté propuesta de upgrade a Premium con 2 meses de descuento.' },
+    { iniciales:'RG', autor:'Ramiro Guerrero', fecha:'06 jun 2026', estado:'proceso', pipeline:'En cierre',      comentario:'Confirmó el upgrade a Premium. Contrato en preparación.' },
+  ],
+  '192': [
+    { iniciales:'AG', autor:'Ana García',   fecha:'02 jun 2026', estado:'proceso', pipeline:'Contacto inicial',  comentario:'Propietaria muy amable pero menciona que estará evaluando renovar o cambiar de plan.' },
+    { iniciales:'AG', autor:'Ana García',   fecha:'07 jun 2026', estado:'proceso', pipeline:'En seguimiento',    comentario:'Preparar cotización del plan Profesional para comparar vs Avanzado actual.' },
+  ],
+  '708': [
+    { iniciales:'CR', autor:'Carlos Ríos',  fecha:'04 jun 2026', estado:'proceso', pipeline:'Contacto inicial',  comentario:'Primer contacto realizado. Cocinero-dueño con buen humor, dice que Bold le ha funcionado bien.' },
+    { iniciales:'CR', autor:'Carlos Ríos',  fecha:'08 jun 2026', estado:'proceso', pipeline:'En seguimiento',    comentario:'Llamar esta semana para cerrar la renovación antes de que venza.' },
+  ],
+  '453': [
+    { iniciales:'LP', autor:'Luis Pérez',   fecha:'06 jun 2026', estado:'proceso', pipeline:'Contacto inicial',  comentario:'Cliente con poca actividad. Menciona que su prima también tiene un punto y quizás no renueva.' },
+    { iniciales:'LP', autor:'Luis Pérez',   fecha:'08 jun 2026', estado:'proceso', pipeline:'En seguimiento',    comentario:'Intentar último contacto antes de marcar como riesgo alto.' },
+  ],
+};
+
+const EJECUTIVO_HISTORY = {
+  '345': [
+    { iniciales:'RG', autor:'Ramiro Guerrero', fecha:'02 may 2026', ejecutivoAnterior:'Ana García',   ejecutivoNuevo:'Luis Pérez' },
+    { iniciales:'RG', autor:'Ramiro Guerrero', fecha:'04 jun 2026', ejecutivoAnterior:'Luis Pérez',   ejecutivoNuevo:'Ramiro Guerrero' },
+  ],
+  '774': [
+    { iniciales:'RG', autor:'Ramiro Guerrero', fecha:'28 may 2026', ejecutivoAnterior:'Luis Pérez',   ejecutivoNuevo:'María Torres' },
+  ],
+  '622': [
+    { iniciales:'RG', autor:'Ramiro Guerrero', fecha:'08 jun 2026', ejecutivoAnterior:'Luis Pérez',   ejecutivoNuevo:'Ramiro Guerrero' },
+  ],
+  '965': [
+    { iniciales:'RG', autor:'Ramiro Guerrero', fecha:'26 may 2026', ejecutivoAnterior:'Ramiro Guerrero', ejecutivoNuevo:'Carlos Ríos' },
+  ],
+  '271': [
+    { iniciales:'RG', autor:'Ramiro Guerrero', fecha:'06 jun 2026', ejecutivoAnterior:'Luis Pérez',   ejecutivoNuevo:'Ramiro Guerrero' },
   ],
 };
 
@@ -109,6 +230,27 @@ function diasRestantes(r) {
 /* ── NAVEGACIÓN ── */
 function openDetail(id) {
   window.location.href = 'detalle.html?id=' + id;
+}
+
+/* ── FILTRO EJECUTIVO COMERCIAL ── */
+let ejecutivoFilter = 'Todos';
+
+function matchesEjecutivoFilter(r) {
+  if (ejecutivoFilter === 'Todos') return true;
+  if (ejecutivoFilter === 'Sin asignar') return !r || !r.ejecutivo;
+  return r && r.ejecutivo === ejecutivoFilter;
+}
+
+function setEjecutivoFilter(valor) {
+  ejecutivoFilter = valor;
+  if (typeof renderCards   === 'function') renderCards();
+  if (typeof renderAlertas === 'function') renderAlertas();
+  if (typeof renderTable   === 'function') renderTable();
+}
+
+function handleEjecutivoFilterLista(select) {
+  select.value = 'Todos';
+  alert('No tienes permiso para filtrar por otros ejecutivos.');
 }
 
 /* ── DRAWER (FILTROS) ── */
@@ -161,6 +303,7 @@ function openComments(id, hideImportante) {
   document.getElementById('importante-label').style.visibility = showImportante ? 'visible' : 'hidden';
   updateEstadoInlineBtn(r.estado, r.motivoPerdida, r.pipeline);
   updateProbInlineBtn(r.prob);
+  updateEjecutivoInlineBtn(r.ejecutivo);
   renderCommentList(r.comentarios);
   document.getElementById('comment-drawer').classList.add('open');
   document.getElementById('backdrop').classList.add('open');
@@ -186,7 +329,11 @@ function fmtAlertaDate(iso, hora) {
   return `${parseInt(d)} ${meses[parseInt(m)-1]} ${y} - ${hora}`;
 }
 
-function renderAlertaBadge(alerta) {
+let activeCommentAlertaRowId = null;
+let activeCommentAlertaIdx = null;
+let selectedCommentResultado = null;
+
+function renderAlertaBadge(alerta, comentIdx) {
   const BELL = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;flex-shrink:0"><path d="M8 2a4 4 0 0 1 4 4v3l1 1.5H3L4 9V6a4 4 0 0 1 4-4z"/><path d="M6.5 13.5a1.5 1.5 0 0 0 3 0"/></svg>`;
   const estadoStyles = {
     pendiente: { bg:'#F4F5F8', color:'#7B7E96', label:'Pendiente de gestión' },
@@ -194,16 +341,78 @@ function renderAlertaBadge(alerta) {
     cancelado:  { bg:'#FFE8EE', color:'#A30028', label:'✕ Cancelado' },
   };
   const s = estadoStyles[alerta.estado] || estadoStyles.pendiente;
+  const isPendiente = alerta.estado === 'pendiente';
+  const labelAttrs = isPendiente && activeCommentId != null && comentIdx !== undefined
+    ? `onclick="openCommentAlertaModal('${activeCommentId}',${comentIdx})" style="font-size:10px;font-weight:700;color:${s.color};background:${s.bg};border:1px solid ${s.color}44;border-radius:20px;padding:2px 8px;white-space:nowrap;cursor:pointer;text-decoration:underline"`
+    : `style="font-size:10px;font-weight:700;color:${s.color};background:${s.bg};border:1px solid ${s.color}44;border-radius:20px;padding:2px 8px;white-space:nowrap"`;
   return `
     <div class="comment-alerta-tag" style="background:${s.bg};border:1px solid ${s.color}22;border-radius:8px;padding:8px 10px;margin-top:6px;margin-left:36px;display:flex;flex-direction:column;gap:4px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
         <div style="display:flex;align-items:center;gap:5px;color:${s.color};font-size:11px;font-weight:700">
           ${BELL} Alerta: ${fmtAlertaDate(alerta.fechaAlerta, alerta.hora)}
         </div>
-        <span style="font-size:10px;font-weight:700;color:${s.color};background:${s.bg};border:1px solid ${s.color}44;border-radius:20px;padding:2px 8px;white-space:nowrap">${s.label}</span>
+        <span ${labelAttrs}>${s.label}</span>
       </div>
       ${alerta.comentarioResolucion ? `<div style="font-size:12px;color:#444;line-height:1.4;margin-top:2px;padding-top:4px;border-top:1px solid ${s.color}22">"${alerta.comentarioResolucion}"</div>` : ''}
     </div>`;
+}
+
+function openCommentAlertaModal(rowId, comentIdx) {
+  activeCommentAlertaRowId = rowId;
+  activeCommentAlertaIdx = comentIdx;
+  selectedCommentResultado = null;
+  const r = ROWS.find(x => x.id === rowId);
+  if (!r) return;
+  const alerta = r.comentarios[comentIdx] && r.comentarios[comentIdx].alerta;
+  if (!alerta) return;
+  const fechaEl = document.getElementById('cg-fecha');
+  if (fechaEl) fechaEl.textContent = fmtAlertaDate(alerta.fechaAlerta, alerta.hora);
+  const commentEl = document.getElementById('cg-comment');
+  if (commentEl) commentEl.value = '';
+  const errEl = document.getElementById('cg-error');
+  if (errEl) errEl.style.display = 'none';
+  const btnR = document.getElementById('cg-btn-realizado');
+  const btnC = document.getElementById('cg-btn-cancelado');
+  if (btnR) btnR.classList.remove('active');
+  if (btnC) btnC.classList.remove('active');
+  const modal = document.getElementById('comment-gestionar-modal');
+  if (modal) modal.classList.add('open');
+}
+
+function closeCommentAlertaModal(e) {
+  const modal = document.getElementById('comment-gestionar-modal');
+  if (!modal) return;
+  if (e && e.target !== modal) return;
+  modal.classList.remove('open');
+}
+
+function selectCommentResultado(val, btn) {
+  selectedCommentResultado = val;
+  const btnR = document.getElementById('cg-btn-realizado');
+  const btnC = document.getElementById('cg-btn-cancelado');
+  if (btnR) btnR.classList.remove('active');
+  if (btnC) btnC.classList.remove('active');
+  btn.classList.add('active');
+}
+
+function confirmCommentAlerta() {
+  const comentario = (document.getElementById('cg-comment') || {}).value || '';
+  const errEl = document.getElementById('cg-error');
+  if (!selectedCommentResultado || !comentario.trim()) {
+    if (errEl) errEl.style.display = 'block';
+    return;
+  }
+  if (errEl) errEl.style.display = 'none';
+  const r = ROWS.find(x => x.id === activeCommentAlertaRowId);
+  if (!r) return;
+  const alerta = r.comentarios[activeCommentAlertaIdx] && r.comentarios[activeCommentAlertaIdx].alerta;
+  if (!alerta) return;
+  alerta.estado = selectedCommentResultado;
+  alerta.comentarioResolucion = comentario.trim();
+  const modal = document.getElementById('comment-gestionar-modal');
+  if (modal) modal.classList.remove('open');
+  renderCommentList(r.comentarios);
+  if (typeof renderAlertas === 'function') renderAlertas();
 }
 
 function renderCommentList(comments) {
@@ -212,7 +421,7 @@ function renderCommentList(comments) {
     list.innerHTML = `<div style="color:var(--gray-text);font-size:13px;text-align:center;padding:24px 0">Sin comentarios aún.</div>`;
     return;
   }
-  list.innerHTML = comments.map(c => `
+  list.innerHTML = comments.map((c, i) => `
     <div class="comment-item">
       <div class="comment-meta">
         <div class="comment-avatar">${c.iniciales}</div>
@@ -220,7 +429,7 @@ function renderCommentList(comments) {
         <span class="comment-date">${c.fecha}</span>
       </div>
       <div class="comment-text">${c.texto}</div>
-      ${c.alerta ? renderAlertaBadge(c.alerta) : ''}
+      ${c.alerta ? renderAlertaBadge(c.alerta, i) : ''}
     </div>
   `).join('');
   list.scrollTop = list.scrollHeight;
@@ -337,21 +546,24 @@ function updateEstadoInlineBtn(estado, motivo, pipeline) {
   if (!btn) return;
   btn.textContent = ESTADO_LABELS[estado] || estado;
   btn.style.color = ESTADO_COLORS[estado] || 'var(--text)';
-  const estadoRow = btn.closest('div[style*="border-top"]');
+  const estadoInnerRow = btn.parentElement;
 
   let motivoEl = document.getElementById('motivo-inline');
   if (estado === 'perdido' && motivo) {
-    if (!motivoEl) { motivoEl = document.createElement('div'); motivoEl.id = 'motivo-inline'; if (estadoRow) estadoRow.appendChild(motivoEl); }
-    motivoEl.style.cssText = 'font-size:11px;font-weight:600;color:var(--white);background:var(--red);border-radius:6px;padding:3px 10px;display:inline-block;width:fit-content;margin-top:6px';
+    if (!motivoEl) { motivoEl = document.createElement('span'); motivoEl.id = 'motivo-inline'; if (estadoInnerRow) estadoInnerRow.appendChild(motivoEl); }
+    motivoEl.style.cssText = 'font-size:11px;font-weight:600;color:var(--white);background:var(--red);border-radius:6px;padding:3px 10px;display:inline-block;width:fit-content';
     motivoEl.textContent = motivo;
   } else if (motivoEl) { motivoEl.remove(); }
 
-  let pipelineEl = document.getElementById('pipeline-inline');
+  const pipelineBtn = document.getElementById('pipeline-inline-btn');
+  const pipelineSep = document.getElementById('pipeline-sep');
   if (estado === 'proceso' && pipeline) {
-    if (!pipelineEl) { pipelineEl = document.createElement('div'); pipelineEl.id = 'pipeline-inline'; if (estadoRow) estadoRow.appendChild(pipelineEl); }
-    pipelineEl.style.cssText = 'font-size:11px;font-weight:600;color:var(--blue);background:#EEF0FF;border-radius:6px;padding:3px 10px;display:inline-block;width:fit-content;margin-top:6px';
-    pipelineEl.textContent = pipeline;
-  } else if (pipelineEl) { pipelineEl.remove(); }
+    if (pipelineBtn) { pipelineBtn.textContent = 'Pipeline: ' + pipeline; pipelineBtn.style.display = 'inline'; }
+    if (pipelineSep) pipelineSep.style.display = 'inline';
+  } else {
+    if (pipelineBtn) pipelineBtn.style.display = 'none';
+    if (pipelineSep) pipelineSep.style.display = 'none';
+  }
 }
 
 function openEstadoModal() {
@@ -430,4 +642,72 @@ function openEstadoHistory() {
 function closeEstadoHistory(e) {
   if (e && e.target !== document.getElementById('estado-history-modal')) return;
   document.getElementById('estado-history-modal').classList.remove('open');
+}
+
+/* ── EJECUTIVO ASIGNADO ── */
+let selectedEjecutivo = null;
+
+function updateEjecutivoInlineBtn(ejecutivo) {
+  const btn = document.getElementById('ejecutivo-inline-btn');
+  if (!btn) return;
+  btn.textContent = ejecutivo || 'Sin asignar';
+}
+
+function openEjecutivoModal() {
+  const r = ROWS.find(x => x.id === activeCommentId);
+  if (!r) return;
+  selectedEjecutivo = r.ejecutivo;
+  const body = document.getElementById('ejecutivo-modal-body');
+  body.innerHTML = EJECUTIVOS.map(nombre => `
+    <button class="estado-opt-btn ${nombre === selectedEjecutivo ? 'active' : ''}" style="width:100%;text-align:left" onclick="selectEjecutivoOpt('${nombre}', this)">${nombre}</button>
+  `).join('');
+  document.getElementById('ejecutivo-modal').classList.add('open');
+}
+function closeEjecutivoModal(e) {
+  if (e && e.target !== document.getElementById('ejecutivo-modal')) return;
+  document.getElementById('ejecutivo-modal').classList.remove('open');
+}
+function selectEjecutivoOpt(nombre, btn) {
+  selectedEjecutivo = nombre;
+  btn.parentElement.querySelectorAll('.estado-opt-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function confirmEjecutivo() {
+  const r = ROWS.find(x => x.id === activeCommentId);
+  if (!r) return;
+  if (selectedEjecutivo && selectedEjecutivo !== r.ejecutivo) {
+    if (!EJECUTIVO_HISTORY[r.id]) EJECUTIVO_HISTORY[r.id] = [];
+    EJECUTIVO_HISTORY[r.id].push({ iniciales:'RG', autor:'Ramiro Guerrero', fecha:'09 jun 2026', ejecutivoAnterior: r.ejecutivo, ejecutivoNuevo: selectedEjecutivo });
+    r.ejecutivo = selectedEjecutivo;
+    updateEjecutivoInlineBtn(r.ejecutivo);
+  }
+  document.getElementById('ejecutivo-modal').classList.remove('open');
+}
+
+function openEjecutivoHistory() {
+  const r = ROWS.find(x => x.id === activeCommentId);
+  if (!r) return;
+  const history = EJECUTIVO_HISTORY[r.id] || [];
+  const body = document.getElementById('ejecutivo-history-body');
+  if (!history.length) {
+    body.innerHTML = `<div style="color:var(--gray-text);font-size:13px;text-align:center;padding:24px 0">Sin cambios de ejecutivo asignado registrados.</div>`;
+  } else {
+    body.innerHTML = history.map(h => `
+      <div class="estado-history-item">
+        <div class="prob-history-avatar">${h.iniciales}</div>
+        <div class="prob-history-info" style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="prob-history-name">${h.autor}</span>
+            <span class="prob-history-date">${h.fecha}</span>
+          </div>
+          <div class="estado-history-comment">${h.ejecutivoAnterior} → ${h.ejecutivoNuevo}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+  document.getElementById('ejecutivo-history-modal').classList.add('open');
+}
+function closeEjecutivoHistory(e) {
+  if (e && e.target !== document.getElementById('ejecutivo-history-modal')) return;
+  document.getElementById('ejecutivo-history-modal').classList.remove('open');
 }
