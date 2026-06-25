@@ -53,7 +53,7 @@
     <div class="tabs">
       <a class="tab" href="index.html">Lista</a>
       <a class="tab" href="gestion.html">Gestión</a>
-      <a class="tab active" href="alertas.html">Alertas</a>
+      <a class="tab active" href="alertas.html">Alertas <span class="tab-badge" id="tab-badge-vencidas"></span></a>
     </div>
 
     <!-- Toolbar -->
@@ -559,6 +559,9 @@
 
   function renderAlertas() {
     const all = getVisibleAlerts();
+    const vencidasCount = ALERTS.filter(a => a.estado === 'pendiente' && getAlertSection(a) === 'vencida').length;
+    const badge = document.getElementById('tab-badge-vencidas');
+    if (badge) { badge.textContent = vencidasCount; badge.style.display = vencidasCount > 0 ? '' : 'none'; }
     if (currentAlertaTab === 'proceso') {
       const pending = all.filter(a => a.estado === 'pendiente');
       renderSection('section-vencidas',   'Vencidas',   'vencida',   pending.filter(a => getAlertSection(a) === 'vencida'));
